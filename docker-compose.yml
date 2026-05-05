@@ -1,0 +1,56 @@
+services:
+  # Grafana Alloy batches and processes traces sent to it, generating
+  # auto-logs from those traces.
+  # Includes Metrics, Logs, Traces and Profiles.
+
+  apache:
+    container_name: apache
+    hostname: apache
+    image: httpd:2.4
+    ports:
+      - "80:80"
+    volumes:
+      - ./docker/apache/httpd.conf:/usr/local/apache2/conf/httpd.conf:ro
+      - ./symfony:/var/www/symfony
+    depends_on:
+      - symfony
+    networks:
+      - znet
+
+  symfony:
+    container_name: symfony
+    hostname: symfony
+    depends_on:
+      postgresql:
+        condition: service_started
+    build:
+      context: .
+      dockerfile: ./docker/symfony/Dockerfile
+    volumes:
+        - ./symfony:/var/www/symfony:rw
+    networks:
+      - znet
+
+  postgresql:
+    container_name: postgresql
+    hostname: postgresql
+    image: postgis/postgis:17-master
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=symfony
+    volumes:
+      - postgres-data:/var/lib/postgresql/data:rw
+    ports:
+      - "5432:5432"
+    networks:
+      - znet
+
+volumes:
+  postgres-data:
+
+networks:
+  znet:
+    ipam:
+      config:
+        - subnet: 192.168.39.0/24
