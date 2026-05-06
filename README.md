@@ -33,3 +33,9 @@ composer audit
 ```
 This command will analyze your project's dependencies and report any known security vulnerabilities. It is a good practice to include this command in your CI pipeline to ensure that your application remains secure throughout its development lifecycle.
 
+To get a list of all of the routes in your system, use the debug:router command
+
+```bash
+php bin/console debug:router
+```
+This command will display a list of all the routes defined in your Symfony application, along with their corresponding controllers and HTTP methods. It can be helpful for debugging and understanding the routing configuration of your application.
