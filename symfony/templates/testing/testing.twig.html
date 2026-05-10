@@ -1,6 +1,9 @@
+{% extends "base.html.twig" %}
 
-<!-- TODO: Test if this works submit a PUT request -->
-<form action="/testing" method="POST">
-    <input hidden name="_method" value="PUT" />
-    <button type="submit">Submit</button>
-</form>
+{% block body %}
+    <!-- TODO: Test if this works submit a PUT request -->
+    <form action="/testing" method="POST">
+        <input hidden name="_method" value="PUT" />
+        <button type="submit">Submit</button>
+    </form>
+{% endblock %}

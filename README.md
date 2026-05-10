@@ -39,3 +39,9 @@ To get a list of all of the routes in your system, use the debug:router command
 php bin/console debug:router
 ```
 This command will display a list of all the routes defined in your Symfony application, along with their corresponding controllers and HTTP methods. It can be helpful for debugging and understanding the routing configuration of your application.
+
+TODO: description
+
+```bash
+php bin/console route:match
+```
