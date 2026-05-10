@@ -11,6 +11,9 @@
             "bin/console"
         ]
     },
+    "symfony/debug-bundle": {
+        "version": "v8.0.8"
+    },
     "symfony/flex": {
         "version": "2.10",
         "recipe": {
@@ -56,5 +59,11 @@
             "config/packages/routing.yaml",
             "config/routes.yaml"
         ]
+    },
+    "symfony/twig-bundle": {
+        "version": "v8.0.8"
+    },
+    "symfony/web-profiler-bundle": {
+        "version": "v8.0.9"
     }
 }
