@@ -3,8 +3,11 @@
 namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\ExpressionLanguage\Expression;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsCsrfTokenValid;
 
 // TODO: using route group and prefix
 
@@ -48,55 +51,87 @@ class DefaultController extends AbstractController
      * 
      */
 
-    #[Route('/testing', methods: ['GET'])]
+    /*
+     * TODO: What is the best way to share business logic between controller functions?
+     * 
+     */
+
+    // TODO: DTO and validation
+
+    // How to check the user exists in the database for every route (except admin account)?
+
+    /*----------------------------------------
+     * Leveraging HTTP Verbs in Symfony Forms
+     * 
+     * https://github.com/dominicchinkh/tutorial_symfony/wiki/Leveraging-HTTP-Verbs-in-Symfony-Forms
+     * 
+     */
+
+    #[Route('/http-method', methods: ['GET'])]
     public function get(): Response
     {
-        // How to check the user exists in the database for every route (except admin account)?
-
-        // TODO: DTO and validation
-
         return $this->render(
-            'testing/testing.twig.html', []
+            'api/http_method.twig.html', []
         );
     }
 
-    #[Route('/testing', methods: ['PUT'])]
+    #[Route('/http-method', methods: ['PUT'])]
     public function edit(): Response
     {
-        // TODO: DTO and validation
-
-       /*
-        * TODO: What is the best way to share business logic between controller functions?
-        * 
-        */
-
         return new Response(
-            '<html><body>PUT: Testing</body></html>'
+            '<html><body>PUT</body></html>'
         );
     }
 
-    #[Route('/testing', methods: ['POT'])]
+    #[Route('/http-method', methods: ['POT'])]
     public function add(): Response
     {
-        // TODO: DTO and validation
-
-       /*
-        * TODO: What is the best way to share business logic between controller functions?
-        * 
-        */
-
         return new Response(
-            '<html><body>POST: Testing</body></html>'
+            '<html><body>POST</body></html>'
         );
     }
 
-    #[Route('/testing', methods: ['DELETE'])]
+    #[Route('/http-method', methods: ['DELETE'])]
     public function delete(): Response
     {
-        // TODO: DTO and validation
+        return new Response(
+            '<html><body>DELETE</body></html>'
+        );
+    }
+
+    /*-----------------------------------
+     * Manual CSRF Protection in Symfony
+     * 
+     * https://github.com/dominicchinkh/tutorial_symfony/wiki/Manual-CSRF-Protection-in-Symfony
+     * 
+     */
+
+    #[Route('/csrf-token', methods: ['GET'])]
+    public function getCsrfToken(): Response
+    {
+        return $this->render(
+            'form/csrf_token.html.twig', ['id' => 1]
+        );
+    }
+
+    #[Route('/csrf-token', name: 'csrf-token', methods: ['POST'])]
+    #[IsCsrfTokenValid(new Expression('"update-item-" ~ request.query.get("id")'))]
+    public function checkCsrfToken(Request $request): Response
+    {
+        $id             = $request->query->get('id');
+        $submittedToken = $request->getPayload()->get('_token');
+
+        if (!$this->isCsrfTokenValid('update-item-' . $id, $submittedToken)) {
+            return new Response(
+                '<html><body>Invalid CSRF token</body></html>'
+            );            
+        }
 
         return new Response(
-            '<html><body>DELETE: Testing</body></html>'
+            '<html><body>Valid CSRF token</body></html>'
         );
     }
 }
+
+// TODO: say something about http_method_override: true in HTTP method wiki and also the code implementation
+// TODO: say something about the GET-REDIRECT-POST pattern in the HTTP method wiki

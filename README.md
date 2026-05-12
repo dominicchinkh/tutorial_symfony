@@ -40,8 +40,8 @@ php bin/console debug:router
 ```
 This command will display a list of all the routes defined in your Symfony application, along with their corresponding controllers and HTTP methods. It can be helpful for debugging and understanding the routing configuration of your application.
 
-TODO: description
+The other command is called router:match and it shows which route will match the given URL. It's useful to find out why some URL is not executing the controller action that you expect
 
 ```bash
-php bin/console route:match
+php bin/console route:match <route>
 ```

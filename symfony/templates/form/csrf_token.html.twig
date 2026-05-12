@@ -1,0 +1,6 @@
+<form action="{{ url('csrf-token', { id: id }) }}" method="post">
+    {# the argument of csrf_token() is the ID of this token #}
+    <input type="hidden" name="_token" value="{{ csrf_token('update-item-' ~ id) }}">
+
+    <button type="submit">Create item</button>
+</form>
