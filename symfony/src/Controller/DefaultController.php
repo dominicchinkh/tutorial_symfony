@@ -110,7 +110,7 @@ class DefaultController extends AbstractController
     public function getCsrfToken(): Response
     {
         return $this->render(
-            'form/csrf_token.html.twig', ['id' => 1]
+            'security/csrf_token.html.twig', ['id' => 1]
         );
     }
 
@@ -133,5 +133,5 @@ class DefaultController extends AbstractController
     }
 }
 
-// TODO: say something about http_method_override: true in HTTP method wiki and also the code implementation
+// TODO: say something about "http_method_override: true" in HTTP method wiki and also the code implementation
 // TODO: say something about the GET-REDIRECT-POST pattern in the HTTP method wiki
