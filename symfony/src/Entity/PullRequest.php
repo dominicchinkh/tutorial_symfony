@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Enum\PullRequestState;
 use App\Repository\PullRequestRepository;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -20,7 +21,7 @@ class PullRequest
     private ?string $url = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $state = null;
+    private PullRequestState $state;
 
     public function getId(): ?int
     {
@@ -51,12 +52,12 @@ class PullRequest
         return $this;
     }
 
-    public function getState(): ?string
+    public function getState(): PullRequestState
     {
         return $this->state;
     }
 
-    public function setState(string $state): static
+    public function setState(PullRequestState $state): static
     {
         $this->state = $state;
 

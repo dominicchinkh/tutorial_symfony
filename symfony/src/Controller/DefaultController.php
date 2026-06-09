@@ -2,12 +2,16 @@
 // src/Controller/LuckyController.php
 namespace App\Controller;
 
+use App\Entity\PullRequest;
+use App\Enum\PullRequestState;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsCsrfTokenValid;
+use Symfony\Component\Workflow\Exception\LogicException;
+use Symfony\Component\Workflow\WorkflowInterface;
 
 // TODO: using route group and prefix
 
@@ -129,6 +133,61 @@ class DefaultController extends AbstractController
 
         return new Response(
             '<html><body>Valid CSRF token</body></html>'
+        );
+    }
+
+    /*----------
+     * Workflow
+     * 
+     * TODO: [the wiki page]
+     * 
+     */
+    #[Route('/workflow', methods: ['GET'])]
+    public function workflow(
+        WorkflowInterface $pullRequestStateMachine // or dependency injection in the constructor
+    ): Response
+    {
+        $pullRequest = new PullRequest();
+        $pullRequest->setState(PullRequestState::Start);
+
+        /*
+         * Service "state_machine.pull_request" not found: even though it exists in the app's container, 
+         * the container inside "App\Controller\DefaultController" is a smaller service locator that only 
+         * knows about the "router", "request_stack", "http_kernel", "security.authorization_checker", 
+         * "twig", "security.token_storage", "security.csrf.token_manager" and "parameter_bag" services. 
+         * Try using dependency injection instead.
+         * 
+         *   $pullRequestStateMachine = $this->container->get('state_machine.pull_request');
+         */
+
+        $pullRequestStateMachine->can($pullRequest, 'submit');          // true
+        $pullRequestStateMachine->can($pullRequest, 'update');          // false
+        $pullRequestStateMachine->can($pullRequest, 'wait_for_review'); // false
+        $pullRequestStateMachine->can($pullRequest, 'request_change');  // false
+        $pullRequestStateMachine->can($pullRequest, 'accept');          // false
+        $pullRequestStateMachine->can($pullRequest, 'reject');           // false
+        
+        // See all the available transitions for the post in the current state
+        $transitions = $pullRequestStateMachine->getEnabledTransitions($pullRequest);
+        dd($transitions, $pullRequestStateMachine->can($pullRequest, 'publish'), $pullRequestStateMachine->can($pullRequest, 'test'));
+
+        // See a specific available transition for the post in the current state
+        $transition = $pullRequestStateMachine->getEnabledTransition($pullRequest, 'coding');
+
+        // You don't need to set the initial marking in the constructor or any other method;
+        // this is configured in the workflow with the 'initial_marking' option
+        // $pullRequest->setState('start');
+
+        try {
+            $pullRequestStateMachine->apply($pullRequest, 'submit', [
+                'log_comment' => 'My logging comment for the wait for review transition.',
+            ]);
+        } catch (LogicException $exception) {
+            // ...
+        }
+
+        return new Response(
+            '<html><body>Workflow</body></html>'
         );
     }
 }
