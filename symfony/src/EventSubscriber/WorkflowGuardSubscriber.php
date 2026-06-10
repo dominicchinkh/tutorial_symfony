@@ -24,11 +24,12 @@ class WorkflowGuardSubscriber implements EventSubscriberInterface
             $event->setBlocked(true, 'This pull request cannot be marked as tested because it has no title.');
 
             $this->logger->alert(sprintf(
-                'Guard Subscriber: Pull request (id: "%s") performed transition "%s" from "%s" to "%s" with an empty title, blocking the transition.',
+                'Guard Subscriber: Pull request (id: "%s") performed transition "%s" from "%s" to "%s". %s Blocking the transition.',
                 $event->getSubject()->getId(),
                 $event->getTransition()->getName(),
                 implode(', ', array_keys($event->getMarking()->getPlaces())),
-                implode(', ', $event->getTransition()?->getTos() ?? [])
+                implode(', ', $event->getTransition()?->getTos() ?? []),
+                $event->getMetadata('no_title_message', $event->getTransition()),
             ));
         }
     }

@@ -7,6 +7,7 @@ use App\Entity\PullRequest;
 use App\Entity\TableProject;
 use App\Enum\PullRequestState;
 use App\Enum\TableProjectState;
+use App\Validator\Workflow\PullRequestValidator;
 
 // https://symfony.com/doc/current/workflow/workflow-and-state-machine.html
 
@@ -14,6 +15,17 @@ return App::config([
     'framework' => [
         'workflows' => [
             'pull_request' => [
+
+                'definition_validators' => [
+                    PullRequestValidator::class,
+                ],
+
+                // You can store arbitrary metadata in workflows, their places, and their transitions 
+                // using the metadata option.
+                'metadata' => [
+                    'title' => 'Pull Request Workflow',
+                ],
+
                 'type' => 'state_machine',
 
                 // Setting the audit_trail.enabled option to true makes the application generate 
@@ -58,6 +70,12 @@ return App::config([
                     'submit' => [
                         'from' => PullRequestState::Start,
                         'to'   => PullRequestState::Test,
+                        'metadata' => [
+
+                            // This message is passed to the guard event and can be used in the event subscriber to 
+                            // provide more context about why the transition is blocked.
+                            'no_title_message' => 'You cannot move a pull request without a title to the "Test" state.',
+                        ],
                     ],
                     'update' => [
                         'from' => [
@@ -72,14 +90,26 @@ return App::config([
                         'to'   => PullRequestState::Review,
                     ],
                     'request_change' => [
+
+                        # The transition is allowed only if the current user has the ROLE_REVIEWER role.
+                        'guard' => "is_granted('ROLE_REVIEWER')",
+
                         'from' => PullRequestState::Review,
                         'to' => PullRequestState::Coding,
                     ],
                     'accept' => [
+
+                        # or "is_remember_me", "is_fully_authenticated", "is_granted", "is_valid"
+                        # 'guard' => "is_authenticated",
+
                         'from' => PullRequestState::Review,
                         'to' => PullRequestState::Merged,
                     ],
                     'reject' => [
+
+                        # or any valid expression language with "subject" referring to the supported object
+                        'guard' => "subject.isRejectable()",
+
                         'from' => PullRequestState::Review,
                         'to' => PullRequestState::Closed,
                     ],

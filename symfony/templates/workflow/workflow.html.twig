@@ -1,0 +1,62 @@
+<h3>Actions on Pull Request</h3>
+
+<p>Current State: {{ pull_request.state.value }}</p>
+
+{% if workflow_can(pull_request, 'submit') %}
+    <p>Can Submit</p>
+{% endif %}
+
+{% if workflow_can(pull_request, 'update') %}
+    <p>Can Update</p>
+{% endif %}
+
+{% if workflow_can(pull_request, 'wait_for_review') %}
+    <p>Can Wait for Review</p>
+{% endif %}
+
+{% if workflow_can(pull_request, 'request_change') %}
+    <p>Can Request Change</p>
+{% endif %}
+
+{% if workflow_can(pull_request, 'accept') %}
+    <p>Can Accept</p>
+{% endif %}
+
+{% if workflow_can(pull_request, 'reject') %}
+    <p>Can Reject</p>
+{% endif %}
+
+<h3>Actions Available</h3>
+
+{# Or loop through the enabled transitions #}
+{% for transition in workflow_transitions(pull_request) %}
+    <p>{{ transition.name }}</p>
+{% else %}
+    <p>No actions available.</p>
+{% endfor %}
+
+<h3>Is Pull Request Ready for Review</h3>
+
+{# Check if the object is in some specific place #}
+{% if workflow_has_marked_place(pull_request, 'review') %}
+    <p>This pull request is ready for review.</p>
+{% endif %}
+
+<h3>Place Has Been Marked For Pull Request</h3>
+
+{# Check if some place has been marked on the object #}
+{% for place in workflow_marked_places(pull_request) %}
+    <span class="label">{{ place }}</span>
+{% endfor %}
+
+<h3>Transition Blockers for Request Change</h3>
+
+{# Loop through the transition blockers #}
+{% for blocker in workflow_transition_blockers(pull_request, 'request_change') %}
+    <span class="error">{{ blocker.message }}</span>
+{% endfor %}
+
+<h3>Workflow Metadata</h3>
+
+{# Access the workflow metadata #}
+<p>Title: {{ workflow_metadata(pull_request, 'title') }}</p>

@@ -23,6 +23,9 @@ class PullRequest
     #[ORM\Column(length: 255)]
     private PullRequestState $state;
 
+    #[ORM\Column]
+    private bool $rejectable = false;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -60,6 +63,18 @@ class PullRequest
     public function setState(PullRequestState $state): static
     {
         $this->state = $state;
+
+        return $this;
+    }
+
+    public function isRejectable(): bool
+    {
+        return $this->rejectable;
+    }
+
+    public function setRejectable(bool $rejectable): static
+    {
+        $this->rejectable = $rejectable;
 
         return $this;
     }

@@ -38,6 +38,15 @@ class WorkflowController extends AbstractController
 
     ): Response
     {
+        // You can access the workflow metadata in your controller as follows
+        $title = $pullRequestStateMachine
+                    ->getMetadataStore()
+                    ->getWorkflowMetadata()['title'] ?? 'Default title';
+
+        //   getMetadata
+        //   getPlaceMetadata
+        //   getTransitionMetadata
+
         $pullRequest = new PullRequest();
 
         // Comment this out to see the guard event in action and block the transition because the pull 
@@ -108,8 +117,10 @@ class WorkflowController extends AbstractController
         // test -> review
         $pullRequestStateMachine->apply($pullRequest, 'wait_for_review', [Workflow::DISABLE_ANNOUNCE_EVENT => true]);
 
-        return new Response(
-            '<html><body>Workflow</body></html>'
+        return $this->render(
+            'workflow/workflow.html.twig', [
+                'pull_request' => $pullRequest,
+            ]
         );
     }
 }
