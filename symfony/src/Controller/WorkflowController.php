@@ -40,6 +40,10 @@ class WorkflowController extends AbstractController
     {
         $pullRequest = new PullRequest();
 
+        // Comment this out to see the guard event in action and block the transition because the pull 
+        // request has no title
+        $pullRequest->setTitle('Add a new feature');
+
         // You don't need to set the initial marking in the constructor or any other method;
         // this is configured in the workflow with the 'initial_marking' option
 
@@ -72,6 +76,17 @@ class WorkflowController extends AbstractController
             // start -> test
             $pullRequestStateMachine->apply($pullRequest, 'submit', [
                 'log_comment' => 'My logging comment for the wait for review transition.',
+
+                /*
+                 * You can also disable a specific event from being fired when applying a transition
+                 * 
+                 * Disabling an event for a specific transition will take precedence over any events 
+                 * specified in the workflow configuration. 
+                 * 
+                 */
+                
+                // Workflow::DISABLE_ANNOUNCE_EVENT => true,
+                // Workflow::DISABLE_LEAVE_EVENT => true,
             ]);
         } catch (LogicException $exception) {
             // ...

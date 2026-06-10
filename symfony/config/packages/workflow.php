@@ -27,8 +27,8 @@ return App::config([
                 // you have to return null in both cases.
 
                 // For example:
-                //   App\Entity\BlogPost::getState(): ?array
-                //   App\Entity\BlogPost::getState(): ?string
+                //   App\Entity\PullRequest::getState(): ?array
+                //   App\Entity\PullRequest::getState(): ?string
 
                 'marking_store' => [
                     'type' => 'method',
@@ -88,6 +88,12 @@ return App::config([
                         'to' => PullRequestState::Review,
                     ],
                 ],
+
+                # You can pass one or more event names
+                'events_to_dispatch' => ['workflow.leave', 'workflow.completed'],
+
+                # Pass an empty array to not dispatch any event
+                // 'events_to_dispatch' => []
             ],
             'make_table' => [
                 'type' => 'workflow',

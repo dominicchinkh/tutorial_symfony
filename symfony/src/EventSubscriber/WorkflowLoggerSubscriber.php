@@ -2,6 +2,7 @@
 
 namespace App\EventSubscriber;
 
+use App\Enum\PullRequestState;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Workflow\Event\Event;
@@ -17,7 +18,7 @@ class WorkflowLoggerSubscriber implements EventSubscriberInterface
     public function onLeave(Event $event): void
     {
         $this->logger->alert(sprintf(
-            'Blog post (id: "%s") performed transition "%s" from "%s" to "%s"',
+            'Logger Subscriber: Pull request (id: "%s") performed transition "%s" from "%s" to "%s"',
             $event->getSubject()->getId(),
             $event->getTransition()->getName(),
             implode(', ', array_keys($event->getMarking()->getPlaces())),
@@ -29,7 +30,7 @@ class WorkflowLoggerSubscriber implements EventSubscriberInterface
     {
         // https://symfony.com/doc/current/workflow.html#using-events
         return [
-            // LeaveEvent::getName('pull_request') => 'onLeave',
+            LeaveEvent::getName('pull_request', PullRequestState::Start->value) => 'onLeave',
 
             // if you prefer, you can write the event name manually like this:
             // 'workflow.pull_request.leave' => 'onLeave',
