@@ -20,28 +20,28 @@ use Symfony\Component\Routing\Requirement\Requirement;
  * 
  */
 
-return function (RoutingConfigurator $routes): void {
+function generateUuidV4(int $seed): string{
+    // Initialize the engine with an integer seed
+    $engine = new \Random\Engine\Xoshiro256StarStar($seed);
     
+    // Feed the engine into the Randomizer
+    $randomizer = new \Random\Randomizer($engine);
+    
+    // Generate the pseudo-random bytes
+    $data = $randomizer->getBytes(16);
+
+    $data[6] = chr(ord($data[6]) & 0x0f | 0x40); // Set version to 0100
+    $data[8] = chr(ord($data[8]) & 0x3f | 0x80); // Set variant to 10
+    
+    return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($data), 4));
+}
+
+return function (RoutingConfigurator $routes): void {
+
     // 1. Import all your attribute-based routes first
     $routes->import('../src/Controller/', 'attribute');
 
     // 2. Define custom routes in an array
-    function generateUuidV4(int $seed): string{
-        // Initialize the engine with an integer seed
-        $engine = new \Random\Engine\Xoshiro256StarStar($seed);
-        
-        // Feed the engine into the Randomizer
-        $randomizer = new \Random\Randomizer($engine);
-        
-        // Generate the pseudo-random bytes
-        $data = $randomizer->getBytes(16);
-
-        $data[6] = chr(ord($data[6]) & 0x0f | 0x40); // Set version to 0100
-        $data[8] = chr(ord($data[8]) & 0x3f | 0x80); // Set variant to 10
-        
-        return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($data), 4));
-    }
-
     $customRoutes = [
         'route1' => [
             'path' => '/route1',
