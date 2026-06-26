@@ -47,7 +47,12 @@ return App::config([
                     'property' => 'state',
                 ],
 
-                // The "supports" option is useful only if you are using Twig functions ('workflow_*')
+                // The "supports" option tells the framework which PHP classes or entities this specific 
+                // workflow can be applied to.
+
+                // Without the supports option, Twig doesn't know which workflow definition to look up when 
+                // you hand it an entity, e.g. {{ workflow_can('submit', pullRequest) }}.
+                
                 'supports' => [PullRequest::class],
 
                 'initial_marking' => PullRequestState::Start,

@@ -75,10 +75,10 @@ class WorkflowController extends AbstractController
         $pullRequestStateMachine->can($pullRequest, 'accept');          // false
         $pullRequestStateMachine->can($pullRequest, 'reject');          // false
         
-        // See all the available transitions for the post in the current state
+        // See all the available transitions for the pull request in the current state
         $transitions = $pullRequestStateMachine->getEnabledTransitions($pullRequest);
 
-        // See a specific available transition for the post in the current state
+        // See a specific available transition for the pull request in the current state
         $transition = $pullRequestStateMachine->getEnabledTransition($pullRequest, 'coding');
 
         try {
