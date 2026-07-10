@@ -2,8 +2,8 @@
 
 namespace App\Controller;
 
-use App\Dto\ItemDto;
-use App\Dto\UserDto;
+use App\Dto\Item;
+use App\Dto\User;
 use App\Resolver\ItemDtoResolver;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -11,12 +11,17 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
 use Symfony\Component\HttpKernel\Attribute\MapQuerystring;
+use Symfony\Component\HttpKernel\Attribute\MapUploadedFile;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Validator\Constraints as Assert;
 
+#[Route('/controller', name: 'controller-')]
 final class ControllerController extends AbstractController
 {
     #[Route('/', name: 'homepage')]
@@ -60,12 +65,20 @@ final class ControllerController extends AbstractController
             validationGroups: ['strict', 'read'],
 
             // You can also use expressions to define validation groups dynamically based on controller arguments
-            // validationGroups: [new Expression('args["userDto"].getType()')],
+            // validationGroups: [new Expression('args["user"].getType()')],
 
             validationFailedStatusCode: Response::HTTP_NOT_FOUND
 
         )] 
-        ItemDto $itemDto = new ItemDto("", 0),
+        Item $item = new Item("", 0),
+
+        // You can tell Symfony to transform each DTO object into an array
+        // #[MapRequestPayload] Item ...$items
+
+        // As an alternative, instead of variadic arguments you can map the parameter as an array and configure the 
+        // type of each element using the type option of the attribute
+
+        // #[MapRequestPayload(type: Item::class)] array $items
 
         //--------------------------------------------------------------------------------------
         // Map the entire query string into an object that will hold available query parameters
@@ -73,7 +86,7 @@ final class ControllerController extends AbstractController
         // If you want to map your object to a nested array in your query using a specific key, set the `key` 
         // option in the `#[MapQueryString]` attribute
 
-        // #[MapQueryString(key: 'item')] ItemDto $itemDto
+        // #[MapQueryString(key: 'item')] Item $item
 
         #[MapQueryString(
             // You can customize the validation groups used during the mapping and also the HTTP status to 
@@ -83,7 +96,16 @@ final class ControllerController extends AbstractController
         )] 
         // If you need a valid DTO even when the request query string is empty, set a default value for your 
         // controller arguments
-        UserDto $userDto = new UserDto("", "", 0, "user")
+        User $user = new User("", "", 0, "user"),
+
+        //--------------------------------------------------------------
+        // Map one or more UploadedFile objects to controller arguments
+
+        #[MapUploadedFile([
+            new Assert\File(mimeTypes: ['image/png', 'image/jpeg']),
+            new Assert\Image(maxWidth: 3840, maxHeight: 2160),
+        ])]
+        UploadedFile $picture,
 
     ): Response
     {
@@ -95,30 +117,38 @@ final class ControllerController extends AbstractController
     #[Route('/redirect', name: 'controller-redirect')]
     public function redirectTo(): RedirectResponse
     {
-        // redirects to the "homepage" route
+        // Redirects to the "homepage" route
         return $this->redirectToRoute('homepage');
 
-        // redirectToRoute is a shortcut for:
+        // `redirectToRoute` is a shortcut for:
         // return new RedirectResponse($this->generateUrl('homepage'));
 
-        // does a permanent HTTP 301 redirect
+        // A permanent HTTP 301 redirect
         return $this->redirectToRoute('homepage', [], 301);
-        // if you prefer, you can use PHP constants instead of hardcoded numbers
+
+        // If you prefer, you can use PHP constants instead of hardcoded numbers
         return $this->redirectToRoute('homepage', [], Response::HTTP_MOVED_PERMANENTLY);
 
-        // redirect to a route with parameters
+        // Redirect to a route with parameters
         return $this->redirectToRoute('app_lucky_number', ['max' => 10]);
-        // _fragment is a special parameter to point directly to a defined anchor
+
+        // `_fragment` is a special parameter to point directly to a defined anchor
         return $this->redirectToRoute('app_lucky_number', ['_fragment' => 'result']);
 
-        // redirects to a route and maintains the original query string parameters
+        // Redirects to a route and maintains the original query string parameters
         return $this->redirectToRoute('blog_show', $request->query->all());
 
-        // redirects to the current route (e.g. for Post/Redirect/Get pattern):
+        // Redirects to the current route (e.g. for Post/Redirect/Get pattern):
         return $this->redirectToRoute($request->attributes->get('_route'));
 
-        // redirects externally
+        // Redirects externally
         return $this->redirect('http://symfony.com/doc');
+
+        // Note: The redirect() method does not check its destination in any way. If you 
+        // redirect to a URL provided by end-users, your application may be open to the 
+        // un-validated redirects security vulnerability
+
+        // https://cheatsheetseries.owasp.org/cheatsheets/Unvalidated_Redirects_and_Forwards_Cheat_Sheet.html
     }
 
     // If you build a JSON API, make sure to declare your route as using the JSON format
@@ -128,5 +158,23 @@ final class ControllerController extends AbstractController
         return $this->json([
             'message' => 'Hello World'
         ]);
+    }
+
+    #[Route('/error', name: 'controller-error')]
+    public function responseWithError(): Response
+    {
+        // This is just a shortcut for:
+        // throw new LogicException('Access Denied.');
+        return $this->createAccessDeniedException();
+
+        // This is just a shortcut for:
+        // throw new NotFoundHttpException('Not Found');
+        return $this->createNotFoundException();
+
+        // This exception generates a 400 status error
+        throw new HttpException(Response::HTTP_BAD_REQUEST);
+
+        // This exception ultimately generates a 500 status error
+        throw new \Exception('Something went wrong!');
     }
 }

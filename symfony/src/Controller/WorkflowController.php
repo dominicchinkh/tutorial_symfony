@@ -13,9 +13,10 @@ use Symfony\Component\Workflow\Exception\LogicException;
 use Symfony\Component\Workflow\Workflow;
 use Symfony\Component\Workflow\WorkflowInterface;
 
+#[Route('/workflow', name: 'workflow-')]
 class WorkflowController extends AbstractController
 {
-    #[Route('/workflow', methods: ['GET'])]
+    #[Route('/', name: 'home', methods: ['GET'])]
     public function workflow(
         // Use the #[Target] attribute to inject a specific workflow in any service or controller. 
         // Symfony creates a target with the same name as each workflow.

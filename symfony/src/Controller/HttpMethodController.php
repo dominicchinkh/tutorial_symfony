@@ -5,9 +5,10 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
+#[Route('/http', name: 'http-')]
 class HttpMethodController extends AbstractController
 {
-    #[Route('/http-method', methods: ['GET'])]
+    #[Route('/method', name: 'get', methods: ['GET'])]
     public function get(): Response
     {
         return $this->render(
@@ -15,7 +16,7 @@ class HttpMethodController extends AbstractController
         );
     }
 
-    #[Route('/http-method', methods: ['PUT'])]
+    #[Route('/method', name: 'put', methods: ['PUT'])]
     public function edit(): Response
     {
         return new Response(
@@ -23,7 +24,7 @@ class HttpMethodController extends AbstractController
         );
     }
 
-    #[Route('/http-method', methods: ['POST'])]
+    #[Route('/method', name: 'post', methods: ['POST'])]
     public function add(): Response
     {
         return new Response(
@@ -31,7 +32,7 @@ class HttpMethodController extends AbstractController
         );
     }
 
-    #[Route('/http-method', methods: ['DELETE'])]
+    #[Route('/method', name: 'delete', methods: ['DELETE'])]
     public function delete(): Response
     {
         return new Response(

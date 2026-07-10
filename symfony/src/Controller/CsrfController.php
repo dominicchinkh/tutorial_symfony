@@ -8,9 +8,10 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsCsrfTokenValid;
 
+#[Route('/csrf', name: 'csrf-')]
 class CsrfController extends AbstractController
 {
-    #[Route('/csrf-token', methods: ['GET'])]
+    #[Route('/token', name: 'show-token', methods: ['GET'])]
     public function getCsrfToken(): Response
     {
         return $this->render(
@@ -18,7 +19,7 @@ class CsrfController extends AbstractController
         );
     }
 
-    #[Route('/csrf-token', name: 'csrf-token', methods: ['POST'])]
+    #[Route('/token', name: 'check-token', methods: ['POST'])]
     #[IsCsrfTokenValid(new Expression('"update-item-" ~ request.query.get("id")'))]
     public function checkCsrfToken(Request $request): Response
     {

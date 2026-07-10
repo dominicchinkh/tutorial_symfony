@@ -5,16 +5,20 @@ namespace App\Dto;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Serializer\Attribute\Groups;
 
-class ItemDto
+class User
 {
     public function __construct(
         #[Assert\NotBlank]
-        #[Groups(['user:create', 'admin:create'])]
-        public string $name,
+        public string $firstname,
+
+        #[Assert\NotBlank]
+        public string $lastname,
 
         #[Assert\GreaterThan(0)]
-        #[Groups(['admin:create'])]
-        public int $price
+        public int $age,
+
+        #[Assert\Choice(choices: ['admin', 'user', 'guest'])]
+        public string $type
     ) {
     }
 }
