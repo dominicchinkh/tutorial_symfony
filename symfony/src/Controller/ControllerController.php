@@ -17,7 +17,6 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpFoundation\ServerEvent;
 use Symfony\Component\HttpKernel\Attribute\MapRequestHeader;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
@@ -511,38 +510,42 @@ final class ControllerController extends AbstractController
         return new User("Dominic", "Chin", 18, "user");
     }
 
-    #[Route('/server-sent-event', name: 'server-sent-event')]
+    #[Route('/server-sent-event', name: 'server-sent-event', stateless: true)]
     public function serverSentEvent(): EventStreamResponse
     {
-        return new EventStreamResponse(function (): iterable {
+        return new EventStreamResponse(function (EventStreamResponse $response): void {
+            Response::closeOutputBuffers(0, true);
 
             foreach ($this->getNotifications() as $notification) {
+                $response->sendEvent(new ServerEvent($notification->toJson(), type: 'my-event'));
 
-                yield new ServerEvent($notification->toJson(), type: 'my-event');
+                if (connection_aborted()) {
+                    break;
+                }
 
                 // Basic event with only data
-                // yield new ServerEvent('Some message');
+                // $response->sendEvent(new ServerEvent('Some message'));
 
                 // Event with a custom type (clients listen via addEventListener('my-event', ...))
-                // yield new ServerEvent(
+                // $response->sendEvent(new ServerEvent(
                 //     data: json_encode(['status' => 'completed']),
                 //     type: 'my-event'
-                // );
+                // ));
 
                 // Event with an ID (useful for resuming streams with the Last-Event-ID header)
-                // yield new ServerEvent(
+                // $response->sendEvent(new ServerEvent(
                 //     data: 'Update content',
                 //     id: 'event-123'
-                // );
+                // ));
 
                 // Event that tells the client to retry after a specific time (in milliseconds)
-                // yield new ServerEvent(
+                // $response->sendEvent(new ServerEvent(
                 //     data: 'Retry info',
                 //     retry: 5000
-                // );
+                // ));
 
                 // Event with a comment (can be used for keep-alive)
-                // yield new ServerEvent(comment: 'keep-alive');
+                // $response->sendEvent(new ServerEvent(comment: 'keep-alive'));
 
                 sleep(1); // Simulate a delay between events
             }
@@ -562,8 +565,7 @@ final class ControllerController extends AbstractController
             new Notification('Brady Ellis',      'my-event'),
             new Notification('blue Cohen',       'my-event'),
             new Notification('Bailey Brennan',   'my-event'),
-            new Notification('Corey Becker',     'my-event'),
-            
+            new Notification('Corey Becker',     'my-event')
         ];
     }
 }

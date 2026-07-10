@@ -1,19 +1,34 @@
 import { EventSource } from 'eventsource';
 
-const eventSource = new EventSource('http://localhost:8000/controller/server-sent-event');
+const eventSourceUrl = process.env.SSE_URL ?? 'http://localhost:8000/controller/server-sent-event';
+const eventSource = new EventSource(eventSourceUrl);
+
+const log = (message) => {
+    process.stdout.write(`[${new Date().toISOString()}] ${message}\n`);
+};
+
+log(`Connecting to ${eventSourceUrl}`);
+
+eventSource.addEventListener('open', () => {
+    log('Connected');
+});
 
 // Listen to all events (without a specific type)
 eventSource.onmessage = (event) => {
-    console.log('Received:', event.data);
+    log(`Received: ${event.data}`);
 };
 
 // Listen to events with a specific type
 eventSource.addEventListener('my-event', (event) => {
-    console.log('My event:', JSON.parse(event.data));
+    log(`My event: ${JSON.stringify(JSON.parse(event.data))}`);
 });
 
-// Handle connection errors
-eventSource.onerror = (error) => {
-    console.error('SSE error:', error);
-    eventSource.close();
+// Handle connection errors (the stream also ends with an error when the server closes)
+eventSource.onerror = () => {
+    if (eventSource.readyState === EventSource.CLOSED) {
+        log('Connection closed');
+        return;
+    }
+
+    log('SSE connection error, retrying...');
 };
