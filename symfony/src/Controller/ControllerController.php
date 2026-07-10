@@ -3,19 +3,22 @@
 namespace App\Controller;
 
 use App\Dto\Item;
+use App\Dto\Notification;
 use App\Dto\User;
 use App\Resolver\ItemResolver;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\EventStreamResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
+use Symfony\Component\HttpFoundation\ServerEvent;
 use Symfony\Component\HttpKernel\Attribute\MapRequestHeader;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
@@ -266,7 +269,7 @@ final class ControllerController extends AbstractController
     ): BinaryFileResponse
     {
         // https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Content-Disposition
-        
+
         // Load the file from the filesystem
         $file = new File($picture->getRealPath());
 
@@ -506,5 +509,61 @@ final class ControllerController extends AbstractController
     public function serialization(): User
     {
         return new User("Dominic", "Chin", 18, "user");
+    }
+
+    #[Route('/server-sent-event', name: 'server-sent-event')]
+    public function serverSentEvent(): EventStreamResponse
+    {
+        return new EventStreamResponse(function (): iterable {
+
+            foreach ($this->getNotifications() as $notification) {
+
+                yield new ServerEvent($notification->toJson(), type: 'my-event');
+
+                // Basic event with only data
+                // yield new ServerEvent('Some message');
+
+                // Event with a custom type (clients listen via addEventListener('my-event', ...))
+                // yield new ServerEvent(
+                //     data: json_encode(['status' => 'completed']),
+                //     type: 'my-event'
+                // );
+
+                // Event with an ID (useful for resuming streams with the Last-Event-ID header)
+                // yield new ServerEvent(
+                //     data: 'Update content',
+                //     id: 'event-123'
+                // );
+
+                // Event that tells the client to retry after a specific time (in milliseconds)
+                // yield new ServerEvent(
+                //     data: 'Retry info',
+                //     retry: 5000
+                // );
+
+                // Event with a comment (can be used for keep-alive)
+                // yield new ServerEvent(comment: 'keep-alive');
+
+                sleep(1); // Simulate a delay between events
+            }
+        });
+    }
+
+    private function getNotifications(): array
+    {
+        // Generated from https://loremgenerator.io/
+        return [
+            new Notification('Vincent Davidson', 'my-event'),
+            new Notification('Mary Carroll',     'my-event'),
+            new Notification('Johnny Barnett',   'my-event'),
+            new Notification('Dennis Weber',     'my-event'),
+            new Notification('Diane Strong',     'my-event'),
+            new Notification('Joseph Noble',     'my-event'),
+            new Notification('Brady Ellis',      'my-event'),
+            new Notification('blue Cohen',       'my-event'),
+            new Notification('Bailey Brennan',   'my-event'),
+            new Notification('Corey Becker',     'my-event'),
+            
+        ];
     }
 }
