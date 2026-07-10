@@ -18,7 +18,7 @@ class User
         public int $age,
 
         #[Assert\Choice(choices: ['admin', 'user', 'guest'])]
-        public string $type
+        public string $type = 'user',
     ) {
     }
 }
