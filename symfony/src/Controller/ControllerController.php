@@ -4,7 +4,7 @@ namespace App\Controller;
 
 use App\Dto\Item;
 use App\Dto\User;
-use App\Resolver\ItemDtoResolver;
+use App\Resolver\ItemResolver;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -54,8 +54,8 @@ final class ControllerController extends AbstractController
         );
     }
 
-    #[Route('/mapping/query/parameter', name: 'mapping-query')]
-    public function mappingQuery(
+    #[Route('/mapping/query/parameter', name: 'mapping-query-parameter')]
+    public function mapQueryParameter(
 
         //--------------------------
         // Mapping Query Parameters
@@ -82,29 +82,23 @@ final class ControllerController extends AbstractController
         );
     }
 
-    #[Route('/mapping/query/string', name: 'mapping-string')]
-    public function mappingString(
+    #[Route('/mapping/query/string', name: 'mapping-query-string')]
+    public function mapQueryString(
 
         //--------------------------------------------------------------------------------------
         // Map the entire query string into an object that will hold available query parameters
 
-        // If you want to map your object to a nested array in your query using a specific key, set the `key` 
-        // option in the `#[MapQueryString]` attribute
+        #[MapQueryString(
+            // You can customize the validation groups used during the mapping and also the HTTP status to 
+            // return if the validation fails
+            validationGroups: ['user:retrieve'],
 
-        // #[MapQueryString(key: 'item')] Item $item
-
-        // #[MapQueryString(
-        //     // You can customize the validation groups used during the mapping and also the HTTP status to 
-        //     // return if the validation fails
-        //     validationGroups: ['strict', 'edit'],
-        //     validationFailedStatusCode: Response::HTTP_UNPROCESSABLE_ENTITY
-        // )] 
-        // User $user// = new User("", "", 0, "user"),
+            validationFailedStatusCode: Response::HTTP_UNPROCESSABLE_ENTITY
+        )] 
+        User $user = new User("", "", 0, "user"),
 
         // Note: If you need a valid DTO even when the request query string is empty, set a default value for your 
         // controller arguments
-
-        #[MapQueryString] User $user
 
     ): Response
     {
@@ -125,8 +119,38 @@ final class ControllerController extends AbstractController
         );
     }
 
-    #[Route('/mapping', name: 'mapping')]
-    public function mapping(
+    #[Route('/mapping/query/string-with-key', name: 'mapping-query-string-with-key')]
+    public function mapQueryStringWithKey(
+
+        //--------------------------------------------------------------------------------------
+        // Map the entire query string into an object that will hold available query parameters
+
+        // If you want to map your object to a nested array in your query using a specific key, set the `key` 
+        // option in the `#[MapQueryString]` attribute
+
+        #[MapQueryString(key: 'user')] User $user
+
+    ): Response
+    {
+        // Testing: http://localhost:8000/controller/mapping/query/string-with-key?user[firstName]=dominic&user[lastName]=chin&user[age]=18&user[type]=user
+
+        return new Response(<<<HTML
+            <html>
+                <body>
+                    <div>
+                        <p>First name: $user->firstName</p>
+                        <p>Last name: $user->lastName</p>
+                        <p>Age: $user->age</p>
+                        <p>Type: $user->type</p>
+                    </div>
+                </body>
+            </html>
+            HTML
+        );
+    }
+
+    #[Route('/mapping/request/payload/item', name: 'mapping-request-payload-item')]
+    public function mapRequestPayloadItem(
 
         //-------------------------------------------------------------------------------------------
         // Map the entire request payload into an object that will hold available request parameters
@@ -136,16 +160,19 @@ final class ControllerController extends AbstractController
         
             // Specify serialization groups so that only certain properties are populated based on the current 
             // API endpoint.
-            serializationContext: ['groups' => ['user:create']],
+            serializationContext: ['groups' => ['item:create']],
         
             // A custom resolver to use for mapping the request payload into the object
-            resolver: ItemDtoResolver::class,
+            resolver: ItemResolver::class,
         
             acceptFormat: 'json',
-            validationGroups: ['strict', 'read'],
+
+            // After mapping the JSON payload to the Item object, only run the validation rules that belong to the 
+            // 'item:retrieve' groups
+            validationGroups: ['item:retrieve'],
 
             // You can also use expressions to define validation groups dynamically based on controller arguments
-            // validationGroups: [new Expression('args["user"].getType()')],
+            // validationGroups: [new Expression('args["item"].getType()')],
 
             validationFailedStatusCode: Response::HTTP_NOT_FOUND
 
@@ -159,6 +186,70 @@ final class ControllerController extends AbstractController
         // type of each element using the type option of the attribute
 
         // #[MapRequestPayload(type: Item::class)] array $items
+
+    ): Response
+    {
+        return new Response(<<<HTML
+            <html>
+                <body>
+                    <div>
+                        <p>Name: $item->name</p>
+                        <p>Price: $item->price</p>
+                    </div>
+                </body>
+            </html>
+            HTML
+        );
+    }
+
+    #[Route('/mapping/request/payload/items', name: 'mapping-request-payload-items')]
+    public function mapRequestPayloadItems(
+
+        //-------------------------------------------------------------------------------------------
+        // Map the entire request payload into an object that will hold available request parameters
+
+        // You can tell Symfony to transform each DTO object into an array. 
+
+        // This is only supported from Symfony 8.1
+        // https://symfony.com/blog/new-in-symfony-8-1-improved-request-payload-mapping#variadic-controller-arguments
+        
+        // #[MapRequestPayload] Item ...$items
+
+        // As an alternative, instead of variadic arguments you can map the parameter as an array and configure the 
+        // type of each element using the type option of the attribute
+
+        #[MapRequestPayload(type: Item::class)] array $items
+
+    ): Response
+    {
+        $list = "";
+        foreach ($items as $item) {
+            $list .= <<<HTML
+                <li>
+                    <p>Name: $item->name</p>
+                    <p>Price: $item->price</p>
+                </li>
+            HTML;
+        }
+
+        return new Response(<<<HTML
+            <html>
+                <body>
+                    <div>
+                        <ul>
+            HTML .
+                $list .
+            <<<HTML
+                        </ul>
+                    </div>
+                </body>
+            </html>
+            HTML
+        );
+    }
+
+    #[Route('/mapping', name: 'mapping')]
+    public function mapping(
 
         //--------------------------------------------------------------
         // Map one or more UploadedFile objects to controller arguments

@@ -8,12 +8,13 @@ use Symfony\Component\Serializer\Attribute\Groups;
 class Item
 {
     public function __construct(
+
+        #[Groups(['item:create', 'item:retrieve', 'item:update', 'item:delete'])]
         #[Assert\NotBlank]
-        #[Groups(['user:create', 'admin:create'])]
         public string $name,
 
+        #[Groups(['item:create', 'item:retrieve', 'item:update', 'item:delete'])]
         #[Assert\GreaterThan(0)]
-        #[Groups(['admin:create'])]
         public int $price
     ) {
     }
