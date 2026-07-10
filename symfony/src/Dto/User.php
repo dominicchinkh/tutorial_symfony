@@ -9,10 +9,10 @@ class User
 {
     public function __construct(
         #[Assert\NotBlank]
-        public string $firstname,
+        public string $firstName,
 
         #[Assert\NotBlank]
-        public string $lastname,
+        public string $lastName,
 
         #[Assert\GreaterThan(0)]
         public int $age,

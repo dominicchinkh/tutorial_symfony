@@ -43,13 +43,20 @@ final class ControllerController extends AbstractController
 
     ): Response
     {
-        return new Response(
-            '<html><body>Auto wire</body></html>'
+        return new Response(<<<HTML
+            <html>
+                <body>
+                    <div>
+                        <p>Project Directory: $projectDir</p>
+                    </div>
+                </body>
+            </html>
+            HTML
         );
     }
 
-    #[Route('/mapping', name: 'mapping')]
-    public function mapping(
+    #[Route('/mapping/query/parameter', name: 'mapping-query')]
+    public function mappingQuery(
 
         //--------------------------
         // Mapping Query Parameters
@@ -57,6 +64,70 @@ final class ControllerController extends AbstractController
         #[MapQueryParameter(filter: \FILTER_VALIDATE_REGEXP, options: ['regexp' => '/^\w+$/'])] string $firstName,
         #[MapQueryParameter] string $lastName,
         #[MapQueryParameter(filter: \FILTER_VALIDATE_INT)] int $age,
+
+    ): Response
+    {
+        // Testing: http://localhost:8000/controller/mapping/query/parameter?firstName=dominic&lastName=chin&age=18
+
+        return new Response(<<<HTML
+            <html>
+                <body>
+                    <div>
+                        <p>First name: $firstName</p>
+                        <p>Last name: $lastName</p>
+                        <p>Age: $age</p>
+                    </div>
+                </body>
+            </html>
+            HTML
+        );
+    }
+
+    #[Route('/mapping/query/string', name: 'mapping-string')]
+    public function mappingString(
+
+        //--------------------------------------------------------------------------------------
+        // Map the entire query string into an object that will hold available query parameters
+
+        // If you want to map your object to a nested array in your query using a specific key, set the `key` 
+        // option in the `#[MapQueryString]` attribute
+
+        // #[MapQueryString(key: 'item')] Item $item
+
+        // #[MapQueryString(
+        //     // You can customize the validation groups used during the mapping and also the HTTP status to 
+        //     // return if the validation fails
+        //     validationGroups: ['strict', 'edit'],
+        //     validationFailedStatusCode: Response::HTTP_UNPROCESSABLE_ENTITY
+        // )] 
+        // User $user// = new User("", "", 0, "user"),
+
+        // Note: If you need a valid DTO even when the request query string is empty, set a default value for your 
+        // controller arguments
+
+        #[MapQueryString] User $user
+
+    ): Response
+    {
+        // Testing: http://localhost:8000/controller/mapping/query/string?firstName=dominic&lastName=chin&age=18&role=admin
+
+        return new Response(<<<HTML
+            <html>
+                <body>
+                    <div>
+                        <p>First name: $user->firstName</p>
+                        <p>Last name: $user->lastName</p>
+                        <p>Age: $user->age</p>
+                        <p>Role: $user->role</p>
+                    </div>
+                </body>
+            </html>
+            HTML
+        );
+    }
+
+    #[Route('/mapping', name: 'mapping')]
+    public function mapping(
 
         //-------------------------------------------------------------------------------------------
         // Map the entire request payload into an object that will hold available request parameters
@@ -89,24 +160,6 @@ final class ControllerController extends AbstractController
         // type of each element using the type option of the attribute
 
         // #[MapRequestPayload(type: Item::class)] array $items
-
-        //--------------------------------------------------------------------------------------
-        // Map the entire query string into an object that will hold available query parameters
-
-        // If you want to map your object to a nested array in your query using a specific key, set the `key` 
-        // option in the `#[MapQueryString]` attribute
-
-        // #[MapQueryString(key: 'item')] Item $item
-
-        #[MapQueryString(
-            // You can customize the validation groups used during the mapping and also the HTTP status to 
-            // return if the validation fails
-            validationGroups: ['strict', 'edit'],
-            validationFailedStatusCode: Response::HTTP_UNPROCESSABLE_ENTITY
-        )] 
-        // If you need a valid DTO even when the request query string is empty, set a default value for your 
-        // controller arguments
-        User $user = new User("", "", 0, "user"),
 
         //--------------------------------------------------------------
         // Map one or more UploadedFile objects to controller arguments
@@ -154,7 +207,7 @@ final class ControllerController extends AbstractController
     }
 
     #[Route('/redirect', name: 'redirect')]
-    public function redirect(): RedirectResponse
+    public function redirectTo(): RedirectResponse
     {
         // Redirects to the "homepage" route
         return $this->redirectToRoute('homepage');
