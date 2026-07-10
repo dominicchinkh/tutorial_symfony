@@ -31,8 +31,11 @@ composer install
 Start the local server:
 
 ```Bash
-symfony serve
+cd symfony
+php -S localhost:8000 -t public public/index.php
 ```
+
+Note: Use PHP built-in server instead of `symfony serve` (PHP-FPM behind Caddy). With `symfony serve`, the full response is buffered and only sent when the callback finishes. 
 
 ## 📖 About Symfony
 [Symfony](https://symfony.com/) is a set of reusable PHP components and a PHP framework for web projects. It is built on a philosophy of decoupling and standardizing code, making it one of the most robust foundations for enterprise-level PHP applications.
