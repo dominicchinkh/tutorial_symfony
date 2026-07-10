@@ -17,7 +17,7 @@ class User
         #[Assert\NotBlank]
         public string $lastName,
 
-        #[Groups(['user:create', 'user:retrieve', 'user:update'])]
+        #[Groups(['user:create', 'user:update'])]
         #[Assert\GreaterThan(0)]
         public int $age,
 

@@ -11,13 +11,17 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpKernel\Attribute\MapRequestHeader;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
 use Symfony\Component\HttpKernel\Attribute\MapQueryString;
 use Symfony\Component\HttpKernel\Attribute\MapUploadedFile;
+use Symfony\Component\HttpKernel\Attribute\Serialize;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -261,7 +265,22 @@ final class ControllerController extends AbstractController
 
     ): BinaryFileResponse
     {
-        return new BinaryFileResponse($picture->getRealPath());
+        // https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Content-Disposition
+        
+        // Load the file from the filesystem
+        $file = new File($picture->getRealPath());
+
+        // Attachment: Return the file
+        // return $this->file($file);
+
+        // Attachment: Rename the downloaded file
+        // return $this->file($file, 'custom_name.jpg');
+
+        // Inline: Display the file contents in the browser instead of downloading it
+        // return $this->file($picture->getRealPath(), 'custom_name.jpg', ResponseHeaderBag::DISPOSITION_INLINE);
+
+        // Attachment: Send the file contents and force the browser to download it
+        return $this->file($picture->getRealPath());
     }
 
     #[Route('/mapping/uploaded-files', name: 'mapping-uploaded-files', methods: ['POST'])]
@@ -403,5 +422,89 @@ final class ControllerController extends AbstractController
 
         // This exception ultimately generates a 500 status error
         throw new \Exception('Something went wrong!');
+    }
+
+    #[Route('/session', name: 'session')]
+    public function session(Request $request): Response
+    {
+        $session = $request->getSession();
+
+        // Store an attribute for reuse during a later user request
+        $session->set('user_id', 42);
+
+        // Retrieve an attribute with an optional default value
+        $userId = $session->get('user_id', 0);
+
+        $this->addFlash('notice', 'Your changes were saved!');
+        // $this->addFlash() is equivalent to $request->getSession()->getFlashBag()->add()
+
+        return new Response(<<<HTML
+            <html>
+                <body>
+                    <div>
+                        <p>User ID: $userId</p>
+                    </div>
+                </body>
+            </html>
+            HTML
+        );
+    }
+
+    #[Route('/request', name: 'request')]
+    public function request(Request $request): Response
+    {
+        $request->isXmlHttpRequest(); // is it an Ajax request?
+
+        $request->getPreferredLanguage(['en', 'fr']);
+
+        // Retrieves GET and POST variables respectively
+        $request->query->get('page');
+        $request->getPayload()->get('page');
+
+        // Retrieves SERVER variables
+        $request->server->get('HTTP_HOST');
+
+        // Retrieves an instance of UploadedFile identified by foo
+        $request->files->get('foo');
+
+        // Retrieves a COOKIE value
+        $request->cookies->get('PHPSESSID');
+
+        // Retrieves an HTTP request header, with normalized, lowercase keys
+        $request->headers->get('host');
+        $request->headers->get('content-type');
+
+        // Creates a simple Response with a 200 status code (the default)
+        $response = new Response('Hello', Response::HTTP_OK);
+
+        // Creates a CSS-response with a 200 status code
+        $response = new Response('<style></style>');
+        $response->headers->set('Content-Type', 'text/css');
+
+        return $response;
+    }
+
+    #[Route('/configuration', name: 'configuration')]
+    public function configuration(): Response
+    {
+        $contentsDir = $this->getParameter('kernel.project_dir') . '/contents';
+
+        return new Response(<<<HTML
+            <html>
+                <body>
+                    <div>
+                        <p>Content directory: $contentsDir</p>
+                    </div>
+                </body>
+            </html>
+            HTML
+        );
+    }
+
+    #[Route('/serialization', name: 'serialization')]
+    #[Serialize(code: 201, headers: ['X-Custom' => 'value'], context: ['groups' => ['user:retrieve']])]
+    public function serialization(): User
+    {
+        return new User("Dominic", "Chin", 18, "user");
     }
 }
