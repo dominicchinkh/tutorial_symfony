@@ -24,8 +24,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[Route('/controller', name: 'controller-')]
 final class ControllerController extends AbstractController
 {
-    #[Route('/', name: 'homepage')]
-    public function homepage(
+    #[Route('/auto-wire', name: 'auto-wire')]
+    public function autoWire(
 
         //-----------------------------------
         // Injecting Services and Parameters
@@ -39,7 +39,17 @@ final class ControllerController extends AbstractController
 
         // Inject parameter values
         #[Autowire('%kernel.project_dir%')]
-        string $projectDir,
+        string $projectDir
+
+    ): Response
+    {
+        return new Response(
+            '<html><body>Auto wire</body></html>'
+        );
+    }
+
+    #[Route('/mapping', name: 'mapping')]
+    public function mapping(
 
         //--------------------------
         // Mapping Query Parameters
@@ -101,21 +111,50 @@ final class ControllerController extends AbstractController
         //--------------------------------------------------------------
         // Map one or more UploadedFile objects to controller arguments
 
-        #[MapUploadedFile([
-            new Assert\File(mimeTypes: ['image/png', 'image/jpeg']),
-            new Assert\Image(maxWidth: 3840, maxHeight: 2160),
-        ])]
+        #[MapUploadedFile(
+            constraints: [
+                new Assert\File(mimeTypes: ['image/png', 'image/jpeg']),
+                new Assert\Image(maxWidth: 3840, maxHeight: 2160),
+            ],
+
+            // Rename the uploaded file
+            name: 'something-else'
+        )]
         UploadedFile $picture,
+
+        // Upload a collection of files
+        // #[MapUploadedFile(
+        //     constraints: [
+        //         new Assert\File(maxSize: '2M'),
+        //         new Assert\File(mimeTypes: ['application/pdf'])
+        //     ],
+
+        //     // Change the status code of the HTTP exception thrown when there are constraint violations
+        //     validationFailedStatusCode: Response::HTTP_REQUEST_ENTITY_TOO_LARGE
+        // )]
+        // UploadedFile ...$documents,
+
+        //-----------------------------------------------------
+        // Map an HTTP request header to a controller argument
+
+        // Note: By default, the header name is converted from kebab-case to camelCase to 
+        // match the argument name (e.g. the accept-language header maps to the $acceptLanguage 
+        // argument)
+
+        #[MapRequestHeader] string $acceptLanguage, // or `array $acceptLanguage` or `AcceptHeader $acceptLanguage`
+
+        // Pass the HTTP header name explicitly
+        #[MapRequestHeader(name: 'x-custom-token')] string $token,
 
     ): Response
     {
         return new Response(
-            '<html><body>Homepage</body></html>'
+            '<html><body>Mapping</body></html>'
         );
     }
 
-    #[Route('/redirect', name: 'controller-redirect')]
-    public function redirectTo(): RedirectResponse
+    #[Route('/redirect', name: 'redirect')]
+    public function redirect(): RedirectResponse
     {
         // Redirects to the "homepage" route
         return $this->redirectToRoute('homepage');
@@ -152,7 +191,7 @@ final class ControllerController extends AbstractController
     }
 
     // If you build a JSON API, make sure to declare your route as using the JSON format
-    #[Route('/json', name: 'controller-json', format: 'json')]
+    #[Route('/json', name: 'json', format: 'json')]
     public function responseWithJson(): JsonResponse
     {
         return $this->json([
@@ -160,7 +199,7 @@ final class ControllerController extends AbstractController
         ]);
     }
 
-    #[Route('/error', name: 'controller-error')]
+    #[Route('/error', name: 'error')]
     public function responseWithError(): Response
     {
         // This is just a shortcut for:
