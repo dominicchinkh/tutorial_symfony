@@ -4,6 +4,10 @@ framework:
         # See https://symfony.com/doc/current/routing.html#generating-urls-in-commands
         # default_uri: '%env(DEFAULT_URI)%'
 
+        # This tells FrameworkBundle where your main routes file lives
+        resource: '%kernel.project_dir%/config/routes.php'
+        type: php
+
 when@prod:
     framework:
         router:

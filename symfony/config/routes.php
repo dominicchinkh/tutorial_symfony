@@ -42,7 +42,11 @@ return function (RoutingConfigurator $routes): void {
     // 1. Import all your attribute-based routes first
     $routes->import('../src/Controller/', 'attribute');
 
-    // 2. Define custom routes in an array
+    // 2. Recursively import all routing files from the config/routes/ folder
+    // The 'directory' type handles traversing all files and nested subdirectories.
+    $routes->import('routes/', 'directory');
+
+    // 3. Define custom routes in an array
     $customRoutes = [
 
         //-------------------------------------------------------------------------------------------------------
