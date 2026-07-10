@@ -36,3 +36,24 @@ symfony serve
 
 ## 📖 About Symfony
 [Symfony](https://symfony.com/) is a set of reusable PHP components and a PHP framework for web projects. It is built on a philosophy of decoupling and standardizing code, making it one of the most robust foundations for enterprise-level PHP applications.
+
+## Generate documentation in the OpenAPI (Swagger) format
+
+`NelmioApiDocBundle` disables its Swagger UI controller service if its core visual rendering dependencies - specifically Twig and Symfony's Asset component - are missing from your environment.
+
+```Bash
+composer require twig asset
+```
+
+To install and publish third-party bundle assets in a Symfony application, run the core console command
+
+```Bash
+php bin/console assets:install public --symlink --relative
+```
+
+Visit:
+
+```URL
+http://localhost:8000/api/doc
+http://localhost:8000/api/doc.json
+```
