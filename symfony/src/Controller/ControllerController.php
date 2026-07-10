@@ -207,12 +207,12 @@ final class ControllerController extends AbstractController
         // Note: This is only supported from Symfony 8.1
         // https://symfony.com/blog/new-in-symfony-8-1-improved-request-payload-mapping#variadic-controller-arguments
 
-        // #[MapRequestPayload] Item ...$items
+        #[MapRequestPayload] Item ...$items
 
         // As an alternative, instead of variadic arguments you can map the parameter as an array and configure the 
         // type of each element using the type option of the attribute
 
-        #[MapRequestPayload(type: Item::class)] array $items
+        // #[MapRequestPayload(type: Item::class)] array $items
 
     ): Response
     {
@@ -285,10 +285,11 @@ final class ControllerController extends AbstractController
     ): Response
     {
         $list = "";
+
         foreach ($documents as $document) {
             $list .= <<<HTML
                 <li>
-                    <p>Name: $document->name</p>
+                    <p>Name: {$document->getClientOriginalName()}</p>
                 </li>
             HTML;
         }
@@ -297,6 +298,7 @@ final class ControllerController extends AbstractController
             <html>
                 <body>
                     <div>
+                        <h3>Documents:</h3>
                         <ul>
             HTML .
                 $list .
