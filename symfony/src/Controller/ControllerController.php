@@ -8,10 +8,12 @@ use App\Resolver\ItemResolver;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Attribute\MapRequestHeader;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
 use Symfony\Component\HttpKernel\Attribute\MapQueryString;
@@ -23,7 +25,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[Route('/controller', name: 'controller-')]
 final class ControllerController extends AbstractController
 {
-    #[Route('/auto-wire', name: 'auto-wire')]
+    #[Route('/auto-wire', name: 'auto-wire', methods: ['GET'])]
     public function autoWire(
 
         //-----------------------------------
@@ -54,7 +56,7 @@ final class ControllerController extends AbstractController
         );
     }
 
-    #[Route('/mapping/query/parameter', name: 'mapping-query-parameter')]
+    #[Route('/mapping/query/parameter', name: 'mapping-query-parameter', methods: ['GET'])]
     public function mapQueryParameter(
 
         //--------------------------
@@ -82,7 +84,7 @@ final class ControllerController extends AbstractController
         );
     }
 
-    #[Route('/mapping/query/string', name: 'mapping-query-string')]
+    #[Route('/mapping/query/string', name: 'mapping-query-string', methods: ['GET'])]
     public function mapQueryString(
 
         //--------------------------------------------------------------------------------------
@@ -95,10 +97,10 @@ final class ControllerController extends AbstractController
 
             validationFailedStatusCode: Response::HTTP_UNPROCESSABLE_ENTITY
         )] 
-        User $user = new User("", "", 0, "user"),
 
         // Note: If you need a valid DTO even when the request query string is empty, set a default value for your 
         // controller arguments
+        User $user = new User("", "", 0, "user"),
 
     ): Response
     {
@@ -119,7 +121,7 @@ final class ControllerController extends AbstractController
         );
     }
 
-    #[Route('/mapping/query/string-with-key', name: 'mapping-query-string-with-key')]
+    #[Route('/mapping/query/string-with-key', name: 'mapping-query-string-with-key', methods: ['GET'])]
     public function mapQueryStringWithKey(
 
         //--------------------------------------------------------------------------------------
@@ -149,7 +151,7 @@ final class ControllerController extends AbstractController
         );
     }
 
-    #[Route('/mapping/request/payload/item', name: 'mapping-request-payload-item')]
+    #[Route('/mapping/request/payload/item', name: 'mapping-request-payload-item', methods: ['POST'])]
     public function mapRequestPayloadItem(
 
         //-------------------------------------------------------------------------------------------
@@ -169,7 +171,7 @@ final class ControllerController extends AbstractController
 
             // After mapping the JSON payload to the Item object, only run the validation rules that belong to the 
             // 'item:retrieve' groups
-            validationGroups: ['item:retrieve'],
+            validationGroups: ['item:create'],
 
             // You can also use expressions to define validation groups dynamically based on controller arguments
             // validationGroups: [new Expression('args["item"].getType()')],
@@ -178,14 +180,6 @@ final class ControllerController extends AbstractController
 
         )] 
         Item $item = new Item("", 0),
-
-        // You can tell Symfony to transform each DTO object into an array
-        // #[MapRequestPayload] Item ...$items
-
-        // As an alternative, instead of variadic arguments you can map the parameter as an array and configure the 
-        // type of each element using the type option of the attribute
-
-        // #[MapRequestPayload(type: Item::class)] array $items
 
     ): Response
     {
@@ -202,7 +196,7 @@ final class ControllerController extends AbstractController
         );
     }
 
-    #[Route('/mapping/request/payload/items', name: 'mapping-request-payload-items')]
+    #[Route('/mapping/request/payload/items', name: 'mapping-request-payload-items', methods: ['POST'])]
     public function mapRequestPayloadItems(
 
         //-------------------------------------------------------------------------------------------
@@ -210,9 +204,9 @@ final class ControllerController extends AbstractController
 
         // You can tell Symfony to transform each DTO object into an array. 
 
-        // This is only supported from Symfony 8.1
+        // Note: This is only supported from Symfony 8.1
         // https://symfony.com/blog/new-in-symfony-8-1-improved-request-payload-mapping#variadic-controller-arguments
-        
+
         // #[MapRequestPayload] Item ...$items
 
         // As an alternative, instead of variadic arguments you can map the parameter as an array and configure the 
@@ -248,8 +242,8 @@ final class ControllerController extends AbstractController
         );
     }
 
-    #[Route('/mapping', name: 'mapping')]
-    public function mapping(
+    #[Route('/mapping/uploaded-file', name: 'mapping-uploaded-file', methods: ['POST'])]
+    public function mappingUploadedFile(
 
         //--------------------------------------------------------------
         // Map one or more UploadedFile objects to controller arguments
@@ -261,21 +255,62 @@ final class ControllerController extends AbstractController
             ],
 
             // Rename the uploaded file
-            name: 'something-else'
+            name: 'my-cat'
         )]
-        UploadedFile $picture,
+        UploadedFile $picture
+
+    ): BinaryFileResponse
+    {
+        return new BinaryFileResponse($picture->getRealPath());
+    }
+
+    #[Route('/mapping/uploaded-files', name: 'mapping-uploaded-files', methods: ['POST'])]
+    public function mappingUploadedFiles(
+
+        //--------------------------------------------------------------
+        // Map one or more UploadedFile objects to controller arguments
 
         // Upload a collection of files
-        // #[MapUploadedFile(
-        //     constraints: [
-        //         new Assert\File(maxSize: '2M'),
-        //         new Assert\File(mimeTypes: ['application/pdf'])
-        //     ],
+        #[MapUploadedFile(
+            constraints: [
+                new Assert\File(maxSize: '2M'),
+                new Assert\File(mimeTypes: ['application/pdf'])
+            ],
 
-        //     // Change the status code of the HTTP exception thrown when there are constraint violations
-        //     validationFailedStatusCode: Response::HTTP_REQUEST_ENTITY_TOO_LARGE
-        // )]
-        // UploadedFile ...$documents,
+            // Change the status code of the HTTP exception thrown when there are constraint violations
+            validationFailedStatusCode: Response::HTTP_REQUEST_ENTITY_TOO_LARGE
+        )]
+        UploadedFile ...$documents
+
+    ): Response
+    {
+        $list = "";
+        foreach ($documents as $document) {
+            $list .= <<<HTML
+                <li>
+                    <p>Name: $document->name</p>
+                </li>
+            HTML;
+        }
+
+        return new Response(<<<HTML
+            <html>
+                <body>
+                    <div>
+                        <ul>
+            HTML .
+                $list .
+            <<<HTML
+                        </ul>
+                    </div>
+                </body>
+            </html>
+            HTML
+        );
+    }
+
+    #[Route('/mapping/request/header', name: 'mapping-request-header', methods: ['GET'])]
+    public function mappingRequestHeader(
 
         //-----------------------------------------------------
         // Map an HTTP request header to a controller argument
@@ -291,34 +326,42 @@ final class ControllerController extends AbstractController
 
     ): Response
     {
-        return new Response(
-            '<html><body>Mapping</body></html>'
+        return new Response(<<<HTML
+            <html>
+                <body>
+                    <div>
+                        <p>Accepted language: $acceptLanguage</p>
+                        <p>Custom token: $token</p>
+                    </div>
+                </body>
+            </html>
+            HTML
         );
     }
 
     #[Route('/redirect', name: 'redirect')]
     public function redirectTo(): RedirectResponse
     {
-        // Redirects to the "homepage" route
-        return $this->redirectToRoute('homepage');
+        // Redirects to the "auto-wire" route
+        return $this->redirectToRoute('auto-wire');
 
         // `redirectToRoute` is a shortcut for:
-        // return new RedirectResponse($this->generateUrl('homepage'));
+        // return new RedirectResponse($this->generateUrl('auto-wire'));
 
         // A permanent HTTP 301 redirect
-        return $this->redirectToRoute('homepage', [], 301);
+        return $this->redirectToRoute('auto-wire', [], 301);
 
         // If you prefer, you can use PHP constants instead of hardcoded numbers
-        return $this->redirectToRoute('homepage', [], Response::HTTP_MOVED_PERMANENTLY);
+        return $this->redirectToRoute('auto-wire', [], Response::HTTP_MOVED_PERMANENTLY);
 
         // Redirect to a route with parameters
-        return $this->redirectToRoute('app_lucky_number', ['max' => 10]);
+        return $this->redirectToRoute('auto-wire', ['max' => 10]);
 
         // `_fragment` is a special parameter to point directly to a defined anchor
-        return $this->redirectToRoute('app_lucky_number', ['_fragment' => 'result']);
+        return $this->redirectToRoute('auto-wire', ['_fragment' => 'result']);
 
         // Redirects to a route and maintains the original query string parameters
-        return $this->redirectToRoute('blog_show', $request->query->all());
+        return $this->redirectToRoute('auto-wire', $request->query->all());
 
         // Redirects to the current route (e.g. for Post/Redirect/Get pattern):
         return $this->redirectToRoute($request->attributes->get('_route'));
