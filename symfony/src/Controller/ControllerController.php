@@ -400,7 +400,7 @@ final class ControllerController extends AbstractController
     }
 
     // If you build a JSON API, make sure to declare your route as using the JSON format
-    #[Route('/json', name: 'json', format: 'json')]
+    #[Route('/json', name: 'json', format: 'json', methods: ['GET'])]
     public function responseWithJson(): JsonResponse
     {
         return $this->json([
@@ -426,7 +426,7 @@ final class ControllerController extends AbstractController
         throw new \Exception('Something went wrong!');
     }
 
-    #[Route('/session', name: 'session')]
+    #[Route('/session', name: 'session', methods: ['GET'])]
     public function session(Request $request): Response
     {
         $session = $request->getSession();
@@ -486,7 +486,7 @@ final class ControllerController extends AbstractController
         return $response;
     }
 
-    #[Route('/configuration', name: 'configuration')]
+    #[Route('/configuration', name: 'configuration', methods: ['GET'])]
     public function configuration(): Response
     {
         $contentsDir = $this->getParameter('kernel.project_dir') . '/contents';
@@ -503,7 +503,7 @@ final class ControllerController extends AbstractController
         );
     }
 
-    #[Route('/serialization', name: 'serialization')]
+    #[Route('/serialization', name: 'serialization', methods: ['GET'])]
     #[Serialize(code: 201, headers: ['X-Custom' => 'value'], context: ['groups' => ['user:retrieve']])]
     public function serialization(): User
     {

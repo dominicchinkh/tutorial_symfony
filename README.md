@@ -32,7 +32,7 @@ Start the local server:
 
 ```Bash
 cd symfony
-php -S localhost:8000 -t public public/index.php
+php -S localhost:8000 -t public router.php
 ```
 
 Note: Use PHP built-in server instead of `symfony serve` (PHP-FPM behind Caddy). With `symfony serve`, the full response is buffered and only sent when the callback finishes. 

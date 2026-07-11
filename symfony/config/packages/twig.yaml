@@ -1,0 +1,9 @@
+twig:
+    globals:
+        ga_tracking: 'UA-xxxxx-x'
+
+        # Twig global variables can also reference services from the service container.
+        # The value is the service's id prefixed with '@'
+
+        # Note: The main drawback is that these services are not loaded lazily
+        csrf_token: '@App\Generator\CsrfToken'

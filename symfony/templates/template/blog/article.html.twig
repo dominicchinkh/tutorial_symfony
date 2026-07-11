@@ -1,0 +1,18 @@
+{% extends 'template/layout.html.twig' %}
+
+{% block page_contents %}
+    {#
+        The include() Twig function takes as argument the path of the template to include. 
+        
+        The included template has access to all the variables of the template that includes 
+        it (use the with_context option to control this).
+
+        You can also pass variables to the included template. This is useful for example to 
+        rename variables.
+    #}
+    {{ include('template/blog/_user_profile.html.twig', {user: user}, with_context: false) }}
+
+    <div>
+        <p>Slug: {{ slug }}</p>
+    </div>
+{% endblock %}

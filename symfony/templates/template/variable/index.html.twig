@@ -1,0 +1,44 @@
+{% extends 'template/layout.html.twig' %}
+
+{% block page_contents %}
+    <p>Username: {{ app.user.username ?? 'Anonymous user' }}</p>
+
+    {% if app.debug %}
+        
+        {# Refer to symfony/vendor/symfony/http-foundation/Request.php #}
+        <p>Request method: {{ app.request.method }}</p>
+
+        {# Refer to symfony/vendor/symfony/http-foundation/Session/Session.php #}
+        <p>Session ID: {{ app.session.id }}</p>
+        
+        <p>Application environment: {{ app.environment }}</p>
+
+        <p>Application current route: {{ app.current_route }}</p>
+
+        <p>Application current route parameters: </p>
+        <ul>
+            {% for parameter in app.current_route_parameters %}
+                <li>{{ parameter }}</li>
+            {% endfor %}
+        </ul>
+
+        <p>Application locale: {{ app.enabled_locales? app.locale: 'Not available' }}</p>
+
+        <p>Application token: {{ app.token }}</p>
+
+        {# Global variable, defined in symfony/config/packages/twig.yaml #}
+        <p>The Google tracking code is: {{ ga_tracking }}</p>
+
+        <p>CSRF token: {{ csrf_token.generate }}</P>
+
+        <p>Flashes: </p>
+
+        {% for label, messages in app.flashes() %}
+            {% for message in messages %}
+                <div class="alert alert-{{ label }} mb-2">
+                    {{ message|raw }}
+                </div>
+            {% endfor %}
+        {% endfor %}
+    {% endif %}
+{% endblock %}

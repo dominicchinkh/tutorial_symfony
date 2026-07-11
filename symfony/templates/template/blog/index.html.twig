@@ -1,0 +1,54 @@
+{% extends 'template/layout.html.twig' %}
+
+{% block stylesheets %}
+    {# the CSS file lives at "public/css/blog.css" #}
+    <link href="{{ asset('css/blog.css') }}" rel="stylesheet">
+{% endblock %}
+
+{% block page_contents %}
+
+    {# the image lives at "public/images/logo.png" #}
+    <div>
+        <img src="{{ asset('images/logo.jpg') }}" alt="">
+    </div>
+
+    <div>
+        <a href="{{ path('template-blog') }}">Homepage</a>
+    </div>
+    
+    {#
+        Use the path() Twig function to link to these pages and pass the route name as the first 
+        argument and the route parameters as the optional second argument
+    #}
+    <div>
+        <h3>Relative URL</h3>
+        {% for post in blog_posts %}
+            <h4>
+                <a href="{{ path('template-article', {slug: post.slug}) }}">{{ post.title }}</a>
+            </h4>
+
+            <p>{{ post.excerpt }}</p>
+        {% endfor %}
+    </div>
+
+    {#
+        If you need to generate absolute URLs (for example when rendering templates for emails or 
+        RSS feeds), use the url() function, which takes the same arguments as path()
+    #}
+    <div>
+        <h3>Absolute URL</h3>
+        {% for post in blog_posts %}
+            <h4>
+                <a href="{{ url('template-article', {slug: post.slug}) }}">{{ post.title }}</a>
+            </h4>
+
+            <p>{{ post.excerpt }}</p>
+        {% endfor %}
+    </div>
+
+{% endblock %}
+
+{% block javascript %}
+    {# the JS file lives at "public/js/loader.js" #}
+    <script src="{{ asset('js/loader.js') }}"></script>
+{% endblock %}
