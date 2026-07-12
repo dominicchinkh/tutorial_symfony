@@ -1,3 +1,107 @@
-<div{{ attributes }}>
-    <!-- component HTML -->
+{% macro message_formatter(message) %}
+    <strong>{{ message }}</strong>
+{% endmacro %}
+
+{#
+    ALL variables from the upper component are available inside the content of the 
+    lower component. However, because variables are merged, any variables with the 
+    same name are overridden by the lower component.
+
+    Inside of <twig:Component>, the `this` variable represents the component you're 
+    now rendering and you have access to all of that component's variables.
+
+    When you need access to some properties or functions from higher components, that 
+    can be done via the `outerScope` variable.
+
+    You can keep referring to components higher up as well. Just add another outerScope:
+    `outerScope.outerScope`
+#}
+<div 
+    data-controller="alert"
+    {# 
+        // Optionally,
+        {{ stimulus_controller('alert') }} 
+    #}
+
+    {# 
+        To render the attributes, use the special attributes variable that's available 
+        in every component template 
+    #}
+    {{ attributes }}
+
+    {# 
+        In your component template, you can set defaults that are merged with passed 
+        attributes. The passed attributes override the default with the exception of 
+        class. For class, the defaults are prepended
+    #}
+    {{ attributes.defaults({class: 'alert alert-' ~ type}) }}
+
+    {# 
+        You can take full control over the attributes that are rendered by using the 
+        render() method
+
+        Note:
+        1. You need to be sure to call your render() methods before calling {{ attributes }} 
+            or some attributes could be rendered twice
+        2. If you add an attribute without calling render(), it will be rendered twice
+    #}
+    style="{{ attributes.render('style') }} display:block;"
+
+    {#
+        Extract specific attributes and discard the rest
+    #}
+    {{ attributes.only('class') }}
+
+    {#
+        Exclude specific attributes
+    #}
+    attributes.without('class')
+
+    {#
+        Nested attributes:
+
+        In Twig component (e.g. Dialog):
+            <div {{ attributes }}>
+                <div {{ attributes.nested('title') }}>
+                    {% block title %}Default Title{% endblock %}
+                </div>
+            </div>
+
+        Render as:
+            <twig:Dialog class="foo" title:class="bar" />
+    #}
+    {{ attributes.nested('title') }}
+>
+    <div>
+        <!-- component HTML -->
+        {{ message }}
+
+        {# 
+            In the template, the Alert instance is available via the `this` variable and 
+            public properties are available directly 
+        #}
+        {# {{ this.message }} #}
+    </div>
+
+    {#
+        Using macro
+    #}
+    <div>
+        {% from 'components/Alert.html.twig' import message_formatter %}
+        {{ message_formatter(message) }}
+    </div>
+
+    <div>
+        {# 
+            When you add content between the <twig:Alert> open and close tag, it's 
+            passed to your component template as the block called content. 
+        #}
+        {% block content %}{% endblock %}
+
+        {% block footer %}
+            {# Render the default content if needed #}
+            {# {{ parent() }}  #}
+        {% endblock %}
+    </div>
+
 </div>

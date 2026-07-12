@@ -11,3 +11,8 @@
 ###< symfony/framework-bundle ###
 
 /test/**/node_modules
+
+###> symfony/asset-mapper ###
+/public/assets/
+/assets/vendor/
+###< symfony/asset-mapper ###

@@ -1,0 +1,86 @@
+{% extends 'template/layout.html.twig' %}
+
+{% block page_contents %}
+{# {{ component('Alert', {message: 'Hello Twig Components!'}) }} #}
+
+{# 
+    If you pass extra props that are not settable on your component class, 
+    those can be rendered as attributes 
+
+    Note: This would pass withCloseButton (true) props to the Alert component
+#}
+<twig:Alert 
+    id="custom-alert-id" 
+    message="Hello Twig Components!"
+    withCloseButton 
+>
+    {# 
+        When you add content between the <twig:Alert> open and close tag, it's 
+        passed to your component template as the block called content. 
+    #}
+    I'm writing <strong>HTML</strong> right here!
+</twig:Alert>
+
+<twig:SuccessAlert message="Hello World!">
+
+    {#
+        When overriding the alert_message block, you have access to the message variable
+    #}
+    <twig:block name="alert_message">
+        I can override the alert_message block and access the {{ message }} too!
+    </twig:block>
+
+</twig:SuccessAlert>
+
+<twig:Button:Primary />
+<twig:Button:Secondary />
+
+{# renders as: <button class="btn btn-primary btn-md">... #}
+<twig:Button>Click Me!</twig:Button>
+
+{# renders as: <button class="btn btn-secondary btn-lg">... #}
+<twig:Button color="secondary" size="lg">Click Me!</twig:Button>
+
+{# renders as: <button class="btn btn-primary btn-sm custom-class">... #}
+<twig:Button size="sm" class="custom-class">Click Me!</twig:Button>
+
+{#
+    // If an attribute is dynamic, prefix the attribute with : or use the normal {{ }} syntax:
+    <twig:Alert message="hello!" :user="user.id" />
+    <twig:Alert message="hello!" user="{{ user.id }}" />
+#}
+
+{#
+    // Pass object, array, or anything you imagine
+    <twig:Alert :foo="{col: ['foo', 'oof']}" />
+#}
+
+{# 
+    Note: Boolean props are converted using PHP's type juggling rules. The string 
+        "false" is converted to the boolean true.
+
+    // ❌ the string 'false' is converted to the boolean 'true'
+    <twig:Alert message="..." withCloseButton="false" />
+
+    // ✅ use the 'false' boolean value
+    <twig:Alert message="..." withCloseButton="{{ false }}" />
+
+    // ✅ use the dynamic syntax
+    <twig:Alert message="..." :withCloseButton="false" />
+
+    Set an attribute's value to true to render just the attribute name. Set an attribute's 
+    value to false to exclude the attribute
+#}
+
+{#
+    // To pass an array of attributes, use {{...}} spread operator syntax
+    <twig:Alert {{ ...myAttributes }} />
+#}
+
+<twig:Products />
+
+<twig:Menu>
+    <twig:Menu:Item href="/" label="Home"></twig:Menu:Item>
+    <twig:Menu:Item href="/about" label="About"></twig:Menu:Item>
+</twig:Menu>
+{% endblock %}

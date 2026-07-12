@@ -68,4 +68,11 @@ final class TemplateController extends AbstractController
         return $this->render('template/variable/index.html.twig', [
         ]);
     }
+
+    #[Route('/component', name: 'component', methods: ['GET'])]
+    public function component(): Response
+    {
+        return $this->render('template/component/index.html.twig', [
+        ]);
+    }
 }

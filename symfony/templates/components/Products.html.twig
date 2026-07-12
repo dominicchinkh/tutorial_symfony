@@ -1,0 +1,7 @@
+<div{{ attributes }}>
+    <ul>
+        {% for product in this.products %}
+            <li>{{ product.name | capitalize }}: {{ product.price }}</li>
+        {% endfor %}
+    </ul>
+</div>

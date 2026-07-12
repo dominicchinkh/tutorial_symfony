@@ -1,0 +1,10 @@
+{#
+    If your anonymous component lives in a directory with the same 
+    name, you can name the component file index.html.twig to avoid 
+    repetition
+#}
+<nav {{ attributes.defaults({class: 'menu'}) }}>
+    <ul>
+        {% block content %}{% endblock %}
+    </ul>
+</nav>
