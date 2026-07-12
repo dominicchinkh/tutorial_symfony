@@ -1,86 +1,133 @@
 {% extends 'template/layout.html.twig' %}
 
 {% block page_contents %}
-{# {{ component('Alert', {message: 'Hello Twig Components!'}) }} #}
 
-{# 
-    If you pass extra props that are not settable on your component class, 
-    those can be rendered as attributes 
-
-    Note: This would pass withCloseButton (true) props to the Alert component
-#}
-<twig:Alert 
-    id="custom-alert-id" 
-    message="Hello Twig Components!"
-    withCloseButton 
->
-    {# 
-        When you add content between the <twig:Alert> open and close tag, it's 
-        passed to your component template as the block called content. 
-    #}
-    I'm writing <strong>HTML</strong> right here!
-</twig:Alert>
-
-<twig:SuccessAlert message="Hello World!">
+<div>
+    <h2>Alert</h2>
 
     {#
-        When overriding the alert_message block, you have access to the message variable
+        // If an attribute is dynamic, prefix the attribute with : or use the normal {{ }} syntax:
+        <twig:Alert message="hello!" :user="user.id" />
+        <twig:Alert message="hello!" user="{{ user.id }}" />
     #}
-    <twig:block name="alert_message">
-        I can override the alert_message block and access the {{ message }} too!
-    </twig:block>
 
-</twig:SuccessAlert>
+    {#
+        // Pass object, array, or anything you imagine
+        <twig:Alert :foo="{col: ['foo', 'oof']}" />
+    #}
 
-<twig:Button:Primary />
-<twig:Button:Secondary />
+    {# 
+        Note: Boolean props are converted using PHP's type juggling rules. The string 
+            "false" is converted to the boolean true.
 
-{# renders as: <button class="btn btn-primary btn-md">... #}
-<twig:Button>Click Me!</twig:Button>
+        // ❌ the string 'false' is converted to the boolean 'true'
+        <twig:Alert message="..." withCloseButton="false" />
 
-{# renders as: <button class="btn btn-secondary btn-lg">... #}
-<twig:Button color="secondary" size="lg">Click Me!</twig:Button>
+        // ✅ use the 'false' boolean value
+        <twig:Alert message="..." withCloseButton="{{ false }}" />
 
-{# renders as: <button class="btn btn-primary btn-sm custom-class">... #}
-<twig:Button size="sm" class="custom-class">Click Me!</twig:Button>
+        // ✅ use the dynamic syntax
+        <twig:Alert message="..." :withCloseButton="false" />
 
-{#
-    // If an attribute is dynamic, prefix the attribute with : or use the normal {{ }} syntax:
-    <twig:Alert message="hello!" :user="user.id" />
-    <twig:Alert message="hello!" user="{{ user.id }}" />
-#}
+        Set an attribute's value to true to render just the attribute name. Set an attribute's 
+        value to false to exclude the attribute
+    #}
 
-{#
-    // Pass object, array, or anything you imagine
-    <twig:Alert :foo="{col: ['foo', 'oof']}" />
-#}
+    {#
+        // To pass an array of attributes, use {{...}} spread operator syntax
+        <twig:Alert {{ ...myAttributes }} />
+    #}
 
-{# 
-    Note: Boolean props are converted using PHP's type juggling rules. The string 
-        "false" is converted to the boolean true.
+    <div>
+        <h3>Alert</h3>
+        {# 
+            Optionally, you can use the component() function to render a component:
 
-    // ❌ the string 'false' is converted to the boolean 'true'
-    <twig:Alert message="..." withCloseButton="false" />
+            {{ component('Alert', {message: 'Hello Twig Components!'}) }} 
+        #}
 
-    // ✅ use the 'false' boolean value
-    <twig:Alert message="..." withCloseButton="{{ false }}" />
+        {# 
+            If you pass extra props that are not settable on your component class, 
+            those can be rendered as attributes 
 
-    // ✅ use the dynamic syntax
-    <twig:Alert message="..." :withCloseButton="false" />
+            Note: This would pass withCloseButton (true) props to the Alert component
+        #}
+        <twig:Alert 
+            id="custom-alert-id" 
+            message="Hello Twig Components!"
+            withCloseButton 
+        >
+            {# 
+                When you add content between the <twig:Alert> open and close tag, it's 
+                passed to your component template as the block called content. 
+            #}
+            I'm writing <strong>HTML</strong> right here!
+        </twig:Alert>
+    </div>
 
-    Set an attribute's value to true to render just the attribute name. Set an attribute's 
-    value to false to exclude the attribute
-#}
+    <div>
+        <h3>SuccessAlert</h3>
+        <twig:SuccessAlert message="Hello World!">
 
-{#
-    // To pass an array of attributes, use {{...}} spread operator syntax
-    <twig:Alert {{ ...myAttributes }} />
-#}
+            {#
+                When overriding the alert_message block, you have access to the message variable
+            #}
+            <twig:block name="alert_message">
+                I can override the alert_message block and access the {{ message }} too!
+            </twig:block>
 
-<twig:Products />
+        </twig:SuccessAlert>
+    </div>
+</div>
 
-<twig:Menu>
-    <twig:Menu:Item href="/" label="Home"></twig:Menu:Item>
-    <twig:Menu:Item href="/about" label="About"></twig:Menu:Item>
-</twig:Menu>
+<div>
+    <h2>Button</h2>
+
+    <div>
+        <h3>Button:Primary</h3>
+        <twig:Button:Primary />
+    </div>
+
+    <div>
+        <h3>Button:Secondary (anonymous Components)</h3>
+        <twig:Button:Secondary />
+    </div>
+
+    <div>
+        <h3>Button: default (with html_cva() function)</h3>
+        {# renders as: <button class="btn btn-primary btn-md">... #}
+        <twig:Button>Click Me!</twig:Button>
+    </div>
+
+    <div>
+        <h3>Button: secondary and large (with html_cva() function)</h3>
+        {# renders as: <button class="btn btn-secondary btn-lg">... #}
+        <twig:Button color="secondary" size="lg">Click Me!</twig:Button>
+    </div>
+
+    <div>
+        <h3>Button: primary and small with a custom class (with html_cva() function)</h3>
+        {# renders as: <button class="btn btn-primary btn-sm custom-class">... #}
+        <twig:Button size="sm" class="custom-class">Click Me!</twig:Button>
+    </div>
+</div>
+
+<div>
+    <h2>Products</h2>
+    <div>
+        <h3>Products (with dependency injection)</h3>
+        <twig:Products />
+    </div>
+</div>
+
+<div>
+    <h2>Menu</h2>
+    <div>
+        <h3>Menu (with nested components)</h3>
+        <twig:Menu>
+            <twig:Menu:Item href="/" label="Home"></twig:Menu:Item>
+            <twig:Menu:Item href="/about" label="About"></twig:Menu:Item>
+        </twig:Menu>
+    </div>
+</div>
 {% endblock %}

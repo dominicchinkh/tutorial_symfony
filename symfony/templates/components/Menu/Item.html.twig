@@ -1,7 +1,17 @@
+
+{# 
+    Use provide() in the parent to publish a value, and inject() in any descendant to read it.
+
+    Fallback to 4 if the parent doesn't provide a value for some reason 
+#}
+{% set maxLength = inject('menu.maxLength', 4) %}
+
 {# 
     prop "href" is required, but prop "label" has a default value to "label" 
 #}
 {% props href, label = "label" %}
+
 <li {{ attributes.defaults({class: 'menu__item'}) }}>
     <a href="{{ href }}">{% block content %}{{ label }}{% endblock %}</a>
+    <p>Menu item max length: {{ maxLength }}</p>
 </li>
