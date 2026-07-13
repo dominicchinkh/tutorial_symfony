@@ -1,6 +1,15 @@
 <div{{ attributes }}>
     <ul>
-        {% for product in this.products %}
+        {#
+            `computed` is a proxy that wraps your component and caches the return of 
+            methods. If they are called additional times, the cached value is used.
+
+            Note: computed methods only work for component methods with no required arguments.
+
+            Note: do not use the ExposeInTemplate attribute on a computed method, otherwise 
+                the method will be called twice instead of only once.
+        #}
+        {% for product in computed.products %}
             <li>{{ product.name | capitalize }}: {{ product.price }}</li>
         {% endfor %}
     </ul>

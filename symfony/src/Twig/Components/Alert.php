@@ -23,7 +23,55 @@ final class Alert
     use DefaultActionTrait;
 
     public string $type = 'success';
+
     public string $message;
+
+    /*
+        #[ExposeInTemplate('alert_type')]
+        private string $type = 'success'; // available as `{{ alert_type }}` in the template
+
+        // Required to access $this->type
+        public function getType(): string
+        {
+            return $this->type;
+        }
+    */
+
+    /*
+        #[ExposeInTemplate]
+        private string $message; // available as `{{ message }}` in the template
+
+        // Required to access $this->message
+        public function getMessage(): string
+        {
+            return $this->message;
+        }
+    */
+
+    /*
+        #[ExposeInTemplate(name: 'ico', getter: 'fetchIcon')]
+        private string $icon = 'ico-warning'; // available as `{{ ico }}` in the template using `fetchIcon()` as the getter
+
+        // Required to access $this->icon
+        public function fetchIcon(): string
+        {
+            return $this->icon;
+        }
+    */
+
+    /*
+        #[ExposeInTemplate]
+        public function getActions(): array // available as `{{ actions }}` in the template
+        {
+            return [];
+        }
+
+        #[ExposeInTemplate('dismissable')]
+        public function canBeDismissed(): bool // available as `{{ dismissable }}` in the template
+        {
+            return false;
+        }
+    */
 
     public function getTemplate(): string
     {
