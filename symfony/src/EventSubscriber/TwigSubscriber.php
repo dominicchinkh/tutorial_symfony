@@ -1,5 +1,7 @@
 <?php
 
+namespace App\EventSubscriber;
+
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\UX\TwigComponent\Event\PreRenderEvent;
 

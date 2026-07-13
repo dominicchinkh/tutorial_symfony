@@ -26,6 +26,6 @@ final class Products
     public function getProducts(): array
     {
         // an example method that returns an array of Products
-        return $this->productRepository->findByKeyword();
+        return $this->productRepository->findAll();
     }
 }
