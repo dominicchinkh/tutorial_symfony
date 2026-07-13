@@ -1,16 +1,18 @@
-{#
-    Use provide() in the parent to publish a value, and inject() in any descendant to read it.
-#}
-{% props maxLength = 6 %}
-{% do provide('menu.maxLength', maxLength) %}
+<div {{ attributes }}>
+    {#
+        Use provide() in the parent to publish a value, and inject() in any descendant to read it.
+    #}
+    {% props maxLength = 6 %}
+    {% do provide('menu.maxLength', maxLength) %}
 
-{#
-    If your anonymous component lives in a directory with the same 
-    name, you can name the component file index.html.twig to avoid 
-    repetition
-#}
-<nav {{ attributes.defaults({class: 'menu'}) }}>
-    <ul>
-        {% block content %}{% endblock %}
-    </ul>
-</nav>
+    {#
+        If your anonymous component lives in a directory with the same 
+        name, you can name the component file index.html.twig to avoid 
+        repetition
+    #}
+    <nav {{ attributes.defaults({class: 'menu'}) }}>
+        <ul>
+            {% block content %}{% endblock %}
+        </ul>
+    </nav>
+</div>

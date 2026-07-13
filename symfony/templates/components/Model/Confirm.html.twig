@@ -1,26 +1,28 @@
-{#
-    You can create a component that wraps another component to add additional markup, behavior, or 
-    structure. This is useful when you want to extend a base component without modifying it.
+<div {{ attributes }}>
+    {#
+        You can create a component that wraps another component to add additional markup, behavior, or 
+        structure. This is useful when you want to extend a base component without modifying it.
 
-    Modal:Confirm component that wraps Model component and adds confirmation buttons:
-#}
-
-{# 
-    The wrapper can add its own props (confirmText, cancelText) and markup
-#}
-{% props confirmText = 'Confirm', cancelText = 'Cancel' %}
-
-{# 
-    Spread operator {{ ...attributes }} - passes attributes from the wrapper to the wrapped component
-#}
-<twig:Modal {{ ...attributes.defaults({class: 'modal-confirm'}) }}>
-    {# 
-        block(outerBlocks.content) - forwards content blocks from the wrapper to the wrapped component
+        Modal:Confirm component that wraps Model component and adds confirmation buttons:
     #}
-    {{ block(outerBlocks.content) }}
 
-    <div class="modal-actions">
-        <button type="button" class="btn-secondary">{{ cancelText }}</button>
-        <button type="submit" class="btn-primary">{{ confirmText }}</button>
-    </div>
-</twig:Modal>
+    {# 
+        The wrapper can add its own props (confirmText, cancelText) and markup
+    #}
+    {% props confirmText = 'Confirm', cancelText = 'Cancel' %}
+
+    {# 
+        Spread operator {{ ...attributes }} - passes attributes from the wrapper to the wrapped component
+    #}
+    <twig:Modal {{ ...attributes.defaults({class: 'modal-confirm'}) }}>
+        {# 
+            block(outerBlocks.content) - forwards content blocks from the wrapper to the wrapped component
+        #}
+        {{ block(outerBlocks.content) }}
+
+        <div class="modal-actions">
+            <button type="button" class="btn-secondary">{{ cancelText }}</button>
+            <button type="submit" class="btn-primary">{{ confirmText }}</button>
+        </div>
+    </twig:Modal>
+</div>

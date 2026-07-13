@@ -1,10 +1,14 @@
-{% set name = 'Fabien' %}
-<twig:Alert type="success" :message="name">
-    Hello! {{ message }}
-</twig:Alert>
+<div {{ attributes }}>
+    <div>
+        {% set name = 'Fabien' %}
+        <twig:Alert type="success" :message="name">
+            Hello! {{ message }}
+        </twig:Alert>
+    </div>
 
-<div>
-    {% block alert_message %}
-        A default {{ message }}
-    {% endblock %}
+    <div>
+        {% block alert_message %}
+            A default {{ message }}
+        {% endblock %}
+    </div>
 </div>

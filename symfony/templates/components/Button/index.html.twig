@@ -1,14 +1,16 @@
-{% props color = 'primary', size = 'md' %}
+<div {{ attributes }}>
+    {% props color = 'primary', size = 'md' %}
 
-{% set button = html_cva(
-    base: 'btn',
-    variants: {
-        color: { primary: 'btn-primary', secondary: 'btn-secondary' },
-        size: { sm: 'btn-sm', md: 'btn-md', lg: 'btn-lg' }
-    },
-    default_variant: { color: 'primary', size: 'md' }
-) %}
+    {% set button = html_cva(
+        base: 'btn',
+        variants: {
+            color: { primary: 'btn-primary', secondary: 'btn-secondary' },
+            size: { sm: 'btn-sm', md: 'btn-md', lg: 'btn-lg' }
+        },
+        default_variant: { color: 'primary', size: 'md' }
+    ) %}
 
-<button class="{{ button.apply({color, size}, attributes.render('class')) }}">
-    {% block content %}{% endblock %}
-</button>
+    <button class="{{ button.apply({color, size}, attributes.render('class')) }}">
+        {% block content %}{% endblock %}
+    </button>
+</div>
