@@ -69,6 +69,9 @@ final class TemplateController extends AbstractController
         ]);
     }
 
+    // To lists all your application components that live in templates/components/
+    //   php bin/console debug:twig-component
+
     #[Route('/component', name: 'component', methods: ['GET'])]
     public function component(): Response
     {

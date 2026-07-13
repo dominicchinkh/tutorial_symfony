@@ -123,6 +123,27 @@
 <div>
     <h2>Menu</h2>
     <div>
+        {#
+            1. The variables of a component are merged with the variables of its parent component. 
+                Variables with the same name (e.g. this or computed) are overridden by the inner 
+                component.
+
+            2. The original parent component variables are available via the special `outerScope` 
+                variable, so you can, for example, call `outerScope.this.someFunction()`
+
+            3. The contents of blocks defined in parent components are available via the special 
+                `outerBlocks` variable, so you can call `block(outerBlocks.someBlockName)`.
+
+            4. You cannot mix the Twig syntax and the HTML syntax when using nested components.
+
+                ❌ This won't work because it mixes different syntaxes
+
+                <twig:Card>             <- HTML syntax
+                    {% block footer %}  <- Twig syntax
+                        <twig:Button/>
+                    {% endblock %}
+                </twig:Card>
+        #}
         <h3>Menu (with nested components)</h3>
         <twig:Menu>
             <twig:Menu:Item href="/" label="Home"></twig:Menu:Item>

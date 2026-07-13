@@ -16,6 +16,9 @@ final class Products
     // safely render the same component multiple times with different data because each 
     // component will be an independent instance.
     
+    // As a general rule: use readonly for your services, but not for your component class 
+    // or public properties that receive props.
+    
     public function __construct(private ProductRepository $productRepository)
     {
     }
