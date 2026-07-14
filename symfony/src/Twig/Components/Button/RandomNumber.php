@@ -42,7 +42,19 @@ class RandomNumber
     // read.
 
     /** @var Product[] */
-    public ?array $products = null;
+    #[LiveProp]
+    public ?array $products = [];
+
+
+    #[LiveProp]
+    public array $todoItems = ['Train tiger', 'Feed tiger', 'Pet tiger'];
+
+    /** @var string[] */
+    #[LiveProp(writable: true)]
+    public array $checkedTodoItems = [];
+
+    #[LiveProp(writable: true)]
+    public ?string $selectedTodoItem = null;
 
     public function getRandomNumber(): int
     {

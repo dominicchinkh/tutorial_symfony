@@ -1,66 +1,76 @@
 <div {{ attributes }}>
 
     <div>
-        <h3>Max</h3>
-        {#
-            When the user types, the `$max` property on the component will 
-            automatically update!
-        #}
-        <input type="number" data-model="max">
+        <h3>Random Number</h3>
 
-        {# 
-            Live components adds automatic debouncing: it waits for a 150ms 
-            pause between typing before sending an Ajax request to re-render. 
-            You can delay via the debounce modifier:
+        <div>
+            <strong>{{ this.randomNumber }}</strong>
+            <button data-action="live#$render">Generate a new number!</button>
+        </div>
 
-            <input data-model="debounce(100)|max"> 
-        #}
+        <div>
+            {#
+                When the user types, the `$max` property on the component will 
+                automatically update!
+            #}
+        
+            <label for="max">Max</label>
+            <input type="number" data-model="max" id="max">
+        
+            {# 
+                Live components adds automatic debouncing: it waits for a 150ms 
+                pause between typing before sending an Ajax request to re-render. 
+                You can delay via the debounce modifier:
 
-        {# 
-            Sometimes, you might want a field to re-render only after the user 
-            has changed an input and moved to another field. Browsers dispatch 
-            a change event in this situation. To re-render when this event happens, 
-            use the on(change) modifier:
+                <input data-model="debounce(100)|max"> 
+            #}
 
-            <input data-model="on(change)|max"> 
-        #}
+            {# 
+                Sometimes, you might want a field to re-render only after the user 
+                has changed an input and moved to another field. Browsers dispatch 
+                a change event in this situation. To re-render when this event happens, 
+                use the on(change) modifier:
 
-        {# 
-            The max "model" will be updated in JavaScript, but it won't, yet, 
-            make an Ajax call to re-render the component. Whenever the next 
-            re-render does happen, the updated max value will be used.
+                <input data-model="on(change)|max"> 
+            #}
 
-            <input data-model="norender|max"> 
-            <button data-action="live#$render">Apply</button>
-        #}
+            {# 
+                The max "model" will be updated in JavaScript, but it won't, yet, 
+                make an Ajax call to re-render the component. Whenever the next 
+                re-render does happen, the updated max value will be used.
 
-        {#
-            Do not trigger model update until 3 characters are typed
+                <input data-model="norender|max"> 
+                <button data-action="live#$render">Apply</button>
+            #}
 
-            <input data-model="min_length(3)|username" type="text" value="" /> 
+            {#
+                Do not trigger model update until 3 characters are typed
 
-            Only trigger updates when value number is between 10 and 100
+                <input data-model="min_length(3)|username" type="text" value="" /> 
 
-            <input data-model="min_value(10)|max_value(100)|quantity" type="number" value="20" />
-        #}
+                Only trigger updates when value number is between 10 and 100
 
-        {#
-            If you're building a form (more on forms later), instead of adding 
-            data-model to every field, you can instead rely on the name attribute.
+                <input data-model="min_value(10)|max_value(100)|quantity" type="number" value="20" />
+            #}
 
-            You can also use the normal modifiers, like data-model="on(change)|*" 
-            to, for example, only send model updates for the change event of each 
-            field inside.
+            {#
+                If you're building a form (more on forms later), instead of adding 
+                data-model to every field, you can instead rely on the name attribute.
 
-            <form data-model="*">
-                <input
-                    name="max"
-                    value="{{ max }}"
-                >
+                You can also use the normal modifiers, like data-model="on(change)|*" 
+                to, for example, only send model updates for the change event of each 
+                field inside.
 
-                // ...
-            </form>
-        #}
+                <form data-model="*">
+                    <input
+                        name="max"
+                        value="{{ max }}"
+                    >
+
+                    // ...
+                </form>
+            #}
+        </div>
     </div>
 
     <div>
@@ -80,11 +90,36 @@
         {% else %}
             <p>No product available.</p>
         {% endif %}
+
+        
+        <div>
+            <h4>Products</h4>
+            <ul>
+                {% for product in products %}
+                    <li>Name: {{ product.name }} - Price: {{ product.price }} - Description: {{ product.description }}</li>
+                {% endfor %}
+            </ul>
+        </div>
     </div>
 
     <div>
-        <h3>Random Number</h3>
-        <strong>{{ this.randomNumber }}</strong>
-        <button data-action="live#$render">Generate a new number!</button>
+        <h3>Todo Items</h3>
+        <ul>
+            <h4>Checkboxes</h4>
+            {% for todoItem in todoItems %}
+                <div>
+                    <input type="checkbox" data-model="checkedTodoItems" id="todoItem-checkbox-{{ loop.index }}" value="{{ todoItem }}">
+                    <label for="todoItem-checkbox-{{ loop.index }}">{{ todoItem }}</label>
+                </div>
+            {% endfor %}
+
+            <h4>Radio Buttons</h4>
+            {% for todoItem in todoItems %}
+                <div>
+                    <input type="radio" data-model="selectedTodoItem" id="todoItem-radio-{{ loop.index }}" value="{{ todoItem }}">
+                    <label for="todoItem-radio-{{ loop.index }}">{{ todoItem }}</label>
+                </div>
+            {% endfor %}
+        </ul>
     </div>
 </div>
