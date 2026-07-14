@@ -105,6 +105,7 @@
     <div>
         <h3>Todo Items</h3>
         <ul>
+            {# Multiple selection #}
             <h4>Checkboxes</h4>
             {% for todoItem in todoItems %}
                 <div>
@@ -113,6 +114,7 @@
                 </div>
             {% endfor %}
 
+            {# Single selection #}
             <h4>Radio Buttons</h4>
             {% for todoItem in todoItems %}
                 <div>
@@ -128,5 +130,10 @@
                 {% endfor %}
             </select>
         </ul>
+    </div>
+
+    <div>
+        <h3>Publish On</h3>
+        <input type="date" data-model="publishOn">
     </div>
 </div>

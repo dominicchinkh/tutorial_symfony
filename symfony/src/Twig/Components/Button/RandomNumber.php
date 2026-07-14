@@ -56,6 +56,9 @@ class RandomNumber
     #[LiveProp(writable: true)]
     public ?string $selectedTodoItem = null;
 
+    #[LiveProp(writable: true, format: 'Y-m-d')]
+    public ?\DateTimeInterface $publishOn = null;
+
     public function getRandomNumber(): int
     {
         return rand(0, $this->max);
