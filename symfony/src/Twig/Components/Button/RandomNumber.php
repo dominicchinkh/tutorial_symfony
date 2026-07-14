@@ -2,6 +2,7 @@
 
 namespace App\Twig\Components\Button;
 
+use App\Entity\Product;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
@@ -27,14 +28,14 @@ class RandomNumber
     // dehydrated to an empty array, then hydrated back by creating an empty object.
 
     #[LiveProp]
-    public Product $product;
+    public ?Product $product = null;
 
     // Arrays of Doctrine entities and other "simple" values like DateTime are also 
     // supported, as long as the LiveProp has proper PHPDoc that LiveComponents can 
     // read.
 
     /** @var Product[] */
-    public $products = [];
+    public ?array $products = null;
 
     public function getRandomNumber(): int
     {

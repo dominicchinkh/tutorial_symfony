@@ -28,6 +28,13 @@ Install dependencies:
 composer install
 ```
 
+Run database migrations:
+
+```Bash
+cd symfony
+php bin/console doctrine:migrations:migrate
+```
+
 Start the local server:
 
 ```Bash
