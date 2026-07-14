@@ -23,9 +23,11 @@ class Product
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $description = null;
 
-    public function __construct(int $id, string $name, string $price, string $description)
-    {
-        $this->id          = $id;
+    public function __construct(
+        ?string $name = null,
+        ?string $price = null,
+        ?string $description = null,
+    ) {
         $this->name        = $name;
         $this->price       = $price;
         $this->description = $description;

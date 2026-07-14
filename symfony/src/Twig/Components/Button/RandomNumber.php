@@ -27,8 +27,15 @@ class RandomNumber
     // hydrated back by querying the database. If the object is unpersisted, it's 
     // dehydrated to an empty array, then hydrated back by creating an empty object.
 
-    #[LiveProp]
+    // Allow setting writable to property names that should be writable. 
+
+    #[LiveProp(writable: ['name', 'price', 'description'])]
     public ?Product $product = null;
+
+    /* 
+        // #[LiveProp(writable: ['allow_markdown'])]
+        // public array $options = ['allow_markdown' => true, 'allow_html' => false];
+    */
 
     // Arrays of Doctrine entities and other "simple" values like DateTime are also 
     // supported, as long as the LiveProp has proper PHPDoc that LiveComponents can 

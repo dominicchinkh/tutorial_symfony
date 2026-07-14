@@ -18,8 +18,8 @@ class ProductRepository extends ServiceEntityRepository
         parent::__construct($registry, Product::class);
 
         $this->products = [
-            new Product(1, 'pencil', '12.50', 'A pencil'),
-            new Product(2, 'paper', '0.50', 'A paper')
+            new Product('pencil', '12.50', 'A pencil'),
+            new Product('paper', '0.50', 'A paper'),
         ];
     }
 
