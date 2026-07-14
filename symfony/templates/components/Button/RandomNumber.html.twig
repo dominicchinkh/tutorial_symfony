@@ -120,6 +120,13 @@
                     <label for="todoItem-radio-{{ loop.index }}">{{ todoItem }}</label>
                 </div>
             {% endfor %}
+
+            <h4>Select</h4>
+            <select data-model="selectedTodoItem">
+                {% for todoItem in todoItems %}
+                    <option value="{{ todoItem }}">{{ todoItem }}</option>
+                {% endfor %}
+            </select>
         </ul>
     </div>
 </div>
