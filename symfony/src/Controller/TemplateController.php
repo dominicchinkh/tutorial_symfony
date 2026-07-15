@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use App\Dto\Item;
+use App\Dto\Notification;
 use App\Repository\ProductRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -80,10 +82,14 @@ final class TemplateController extends AbstractController
     #[Route('/component', name: 'component', methods: ['GET'])]
     public function component(): Response
     {
-        $products = $this->productRepository->findAll();
+        $items        = [ new Item('Wallet', 16.7) ];
+        $notification = new Notification("Hello", "alert");
+        $products     = $this->productRepository->findAll();
 
         return $this->render('template/component/index.html.twig', [
-            'products' => $products,
+            'items'        => $items,
+            'notification' => $notification,
+            'products'     => $products
         ]);
     }
 }

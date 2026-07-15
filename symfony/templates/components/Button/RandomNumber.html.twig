@@ -91,7 +91,6 @@
             <p>No product available.</p>
         {% endif %}
 
-        
         <div>
             <h4>Products</h4>
             <ul>
@@ -100,6 +99,63 @@
                 {% endfor %}
             </ul>
         </div>
+    </div>
+
+    <div>
+        <h3>Item</h3>
+        {% if item1 %}
+            <div>
+                <input type="text"   data-model="item1.name" value="{{ item1.name }}">
+                <input type="number" data-model="item1.price" value="{{ item1.price }}">
+                <button data-action="live#$render">Apply</button>
+            </div>
+            <div>
+                <p>Name: {{ item1.name }}</p>
+                <p>Price: {{ item1.price }}</p>
+            </div>
+        {% else %}
+            <p>No item available.</p>
+        {% endif %}
+
+        {% if item2 %}
+            <div>
+                <input type="text"   data-model="item2.name" value="{{ item2.name }}">
+                <input type="number" data-model="item2.price" value="{{ item2.price }}">
+                <button data-action="live#$render">Apply</button>
+            </div>
+            <div>
+                <p>Name: {{ item2.name }}</p>
+                <p>Price: {{ item2.price }}</p>
+            </div>
+        {% else %}
+            <p>No item available.</p>
+        {% endif %}
+
+        <div>
+            <h4>Items</h4>
+            <ul>
+                {% for item in items %}
+                    <li>Name: {{ item.name }} - Price: {{ item.price }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+    <div>
+        <h3>Notification</h3>
+        {% if notification %}
+            <div>
+                <input type="text" data-model="notification.message" value="{{ notification.message }}">
+                <input type="text" data-model="notification.type" value="{{ notification.type }}">
+                <button data-action="live#$render">Apply</button>
+            </div>
+            <div>
+                <p>Name: {{ notification.message }}</p>
+                <p>Type: {{ notification.type }}</p>
+            </div>
+        {% else %}
+            <p>No item available.</p>
+        {% endif %}
     </div>
 
     <div>

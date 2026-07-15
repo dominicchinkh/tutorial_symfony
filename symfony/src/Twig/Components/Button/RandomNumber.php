@@ -2,6 +2,8 @@
 
 namespace App\Twig\Components\Button;
 
+use App\Dto\Item;
+use App\Dto\Notification;
 use App\Entity\Product;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
@@ -22,6 +24,11 @@ class RandomNumber
 
     #[LiveProp(writable: true)]
     public int $max = 1000;
+
+    public function getRandomNumber(): int
+    {
+        return rand(0, $this->max);
+    }
 
     // If the Post object is persisted, its dehydrated to the entity's id and then 
     // hydrated back by querying the database. If the object is unpersisted, it's 
@@ -45,7 +52,7 @@ class RandomNumber
     #[LiveProp]
     public ?array $products = [];
 
-
+    // Checkbox/select
     #[LiveProp]
     public array $todoItems = ['Train tiger', 'Feed tiger', 'Pet tiger'];
 
@@ -56,11 +63,42 @@ class RandomNumber
     #[LiveProp(writable: true)]
     public ?string $selectedTodoItem = null;
 
+    // Datetime format
     #[LiveProp(writable: true, format: 'Y-m-d')]
     public ?\DateTimeInterface $publishOn = null;
 
-    public function getRandomNumber(): int
+    // DTO
+    #[LiveProp(writable: ['name', 'price'])]
+    public ?Item $item1 = null;
+
+    /**
+     * @var Item[]
+     */
+    #[LiveProp(writable: true)]
+    public array $items;
+
+    // hydrateWith/dehydrateWith
+    #[LiveProp(
+        writable: ['name', 'price'], 
+        hydrateWith: 'hydrateItem', 
+        dehydrateWith: 'dehydrateItem')
+    ]
+    public ?Item $item2 = null;
+
+    public function dehydrateItem(Item $item)
     {
-        return rand(0, $this->max);
+        return [
+            'name'  => $item->name,
+            'price' => $item->price
+        ];
     }
+
+    public function hydrateItem($data): Item
+    {
+        return new Item($data['name'], $data['price']);
+    }
+
+    // Test hydration extension: symfony/src/Extension/NotificationHydration.php
+    #[LiveProp(writable: ['message', 'type'])]
+    public Notification $notification;
 }

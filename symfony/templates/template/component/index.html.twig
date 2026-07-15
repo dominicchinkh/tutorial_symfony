@@ -40,6 +40,7 @@
 
     <div>
         <h3>Alert</h3>
+
         {# 
             Optionally, you can use the component() function to render a component:
 
@@ -95,7 +96,12 @@
 
     <div>
         <h3>Button:RandomNumber (Live Components)</h3>
-        <twig:Button:RandomNumber max="500" :product="products[0]" :products="products" />
+        <twig:Button:RandomNumber 
+            max="500" 
+            :item1="items[0]" :item2="items[0]" :items="items" 
+            :notification="notification"
+            :product="products[0]" :products="products" 
+        />
     </div>
 
     <div>

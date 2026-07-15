@@ -9,10 +9,10 @@ class Notification
     public function __construct(
 
         #[Assert\NotBlank]
-        public string $message,
+        public string $message = '',
 
         #[Assert\NotBlank]
-        public string $type
+        public string $type = ''
     ) {
     }
 
