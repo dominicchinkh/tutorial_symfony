@@ -67,6 +67,13 @@ class RandomNumber
     #[LiveProp(writable: true, format: 'Y-m-d')]
     public ?\DateTimeInterface $publishOn = null;
 
+    /*
+        If you want the user to be able to change the Post and certain properties, use 
+        the special LiveProp::IDENTITY constant:
+        
+        #[LiveProp(writable: [LiveProp::IDENTITY, 'name', 'price'])]
+    */
+    
     // DTO
     #[LiveProp(writable: ['name', 'price'])]
     public ?Item $item1 = null;
