@@ -189,6 +189,20 @@
     </div>
 
     <div>
+        {#
+            Clicking the button will change a mode live property on your component to the value edit. The 
+            `data-action="live#update"` is Stimulus code that triggers the update
+        #}
+        <h3>Update model manually</h3>
+        <button
+            type="button"
+            data-model="mode"
+            data-value="edit"
+            data-action="live#update"
+        >Edit</button>
+    </div>
+
+    <div>
         <h3>Publish On</h3>
         <input type="date" data-model="publishOn">
     </div>

@@ -101,4 +101,8 @@ class RandomNumber
     // Test hydration extension: symfony/src/Extension/NotificationHydration.php
     #[LiveProp(writable: ['message', 'type'])]
     public Notification $notification;
+
+    // Update model manually
+    #[LiveProp(writable: true)]
+    public string $mode = '';
 }

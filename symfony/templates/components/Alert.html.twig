@@ -17,7 +17,10 @@
     `outerScope.outerScope`
 #}
 <div 
-    data-controller="alert"
+    {{ attributes.defaults({'data-controller': 'alert'}) }}>
+    
+    {# data-controller="alert" #}
+
     {# 
         // Optionally,
         {{ stimulus_controller('alert') }} 
@@ -72,6 +75,36 @@
     #}
     {{ attributes.nested('title') }}
 >
+    {# 
+        Show only when the component is loading 
+    #}
+    <span data-loading="show">Loading</span>
+
+    {#
+        // Instead of hiding or showing an entire element, you could add or remove a class
+        
+        // Add this class when loading
+        <div data-loading="addClass(opacity-50)"></div>
+
+        // Remove this class when loading
+        <div data-loading="removeClass(opacity-50)"></div>
+
+        // Add the "disabled" attribute when loading
+
+        // Note: The addAttribute() and removeAttribute() functions only work with empty HTML 
+        // attributes (disabled, readonly, required, etc.)
+
+        <div data-loading="addAttribute(disabled)"></div>
+
+        // Note: You can also combine any number of directives by separating them with a space
+        <div data-loading="addClass(opacity-50) addAttribute(disabled)"></div>
+
+        // You can add the delay modifier to not trigger the loading changes until loading has 
+        // taken longer than a certain amount of time (default 200ms) 
+
+        <div data-loading="delay(500)|show">Loading</div>
+    #}
+
     <div>
         <!-- component HTML -->
         {{ message }}
@@ -103,5 +136,4 @@
             {# {{ parent() }}  #}
         {% endblock %}
     </div>
-
 </div>
