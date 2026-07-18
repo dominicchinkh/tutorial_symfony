@@ -28,7 +28,7 @@ export default class extends Controller {
     }
 
     connect() {
-        this.element.textContent = 'Hello Stimulus! Edit me in assets/controllers/alert_controller.js';
+        // this.element.textContent = 'Hello Stimulus! Edit me in assets/controllers/alert_controller.js';
     }
 
     // Stimulus action triggered, for example, on user click

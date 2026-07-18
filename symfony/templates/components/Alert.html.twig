@@ -17,7 +17,7 @@
     `outerScope.outerScope`
 #}
 <div 
-    {{ attributes.defaults({'data-controller': 'alert'}) }}>
+    {{ attributes.defaults({'data-controller': 'alert'}) }}
     
     {# data-controller="alert" #}
 
@@ -75,10 +75,40 @@
     #}
     {{ attributes.nested('title') }}
 >
-    {# 
-        Show only when the component is loading 
+    <div>
+        <h4>Message</h4>
+        <!-- component HTML -->
+        {{ message }}
+
+        {# 
+            In the template, the Alert instance is available via the `this` variable and 
+            public properties are available directly 
+        #}
+        {# {{ this.message }} #}
+    </div>
+
+    {#
+        Using macro
     #}
-    <span data-loading="show">Loading</span>
+    <div>
+        <h4>Message with macro</h4>
+        {% from 'components/Alert.html.twig' import message_formatter %}
+        {{ message_formatter(message) }}
+    </div>
+
+    <div>
+        <h4>Block: content and footer</h4>
+        {# 
+            When you add content between the <twig:Alert> open and close tag, it's 
+            passed to your component template as the block called content. 
+        #}
+        {% block content %}{% endblock %}
+
+        {% block footer %}
+            {# Render the default content if needed #}
+            {# {{ parent() }}  #}
+        {% endblock %}
+    </div>
 
     {#
         // Instead of hiding or showing an entire element, you could add or remove a class
@@ -106,34 +136,44 @@
     #}
 
     <div>
-        <!-- component HTML -->
-        {{ message }}
+        <h4>data-loading: triggered on action</h4>
+        <p>
+            {# Shows for any Live Component request #}
+            <span data-loading="show">Loading</span>
 
-        {# 
-            In the template, the Alert instance is available via the `this` variable and 
-            public properties are available directly 
-        #}
-        {# {{ this.message }} #}
+            {# Show only when the "saveForm" action is triggering #}
+            <span data-loading="action(saveForm)|show">Saving...</span>
+        </p>
+        <button
+            type="button"
+            data-action="live#action"
+
+            {#
+                The debounce(300) adds 300ms of "debouncing" before the action is executed. In other 
+                words, if you click really fast 5 times, only one Ajax request will be made!
+            #}
+            data-live-action-param="debounce(300)|saveForm"
+
+            {#
+                You can also pass arguments to your action by adding each as a Stimulus action parameter.
+                In your component, to allow each argument to be passed, add the #[LiveArg] attribute
+            #}
+            data-live-id-param="123"
+            data-live-item-name-param="CustomItem"
+
+            data-loading="action(saveForm)|addAttribute(disabled)"
+        >Save form</button>
     </div>
 
-    {#
-        Using macro
-    #}
     <div>
-        {% from 'components/Alert.html.twig' import message_formatter %}
-        {{ message_formatter(message) }}
-    </div>
+        <h4>data-loading: triggered on model change</h4>
+        <input data-model="message" type="text">
 
-    <div>
-        {# 
-            When you add content between the <twig:Alert> open and close tag, it's 
-            passed to your component template as the block called content. 
-        #}
-        {% block content %}{% endblock %}
+        <span data-loading="model(message)|show">
+            Checking if message is available...
+        </span>
 
-        {% block footer %}
-            {# Render the default content if needed #}
-            {# {{ parent() }}  #}
-        {% endblock %}
+        <!-- multiple modifiers & child properties -->
+        <span data-loading="model(message)|delay|addClass(opacity-50)">...</span>
     </div>
 </div>

@@ -2,8 +2,13 @@
 
 namespace App\Twig\Components;
 
+use Psr\Log\LoggerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
+use Symfony\UX\LiveComponent\Attribute\LiveAction;
+use Symfony\UX\LiveComponent\Attribute\LiveArg;
+use Symfony\UX\LiveComponent\Attribute\LiveProp;
 use Symfony\UX\TwigComponent\Attribute\FromMethod;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
 use Symfony\UX\TwigComponent\Attribute\PostMount;
@@ -18,13 +23,17 @@ use Symfony\UX\TwigComponent\Attribute\PreMount;
 // `this.property` must be used
 // #[AsTwigComponent(exposePublicProps: false)]
 
-final class Alert
+// The component now extends AbstractController! That is totally allowed, and 
+// gives you access to all of your normal controller shortcuts.
+
+final class Alert extends AbstractController
 {
     use DefaultActionTrait;
 
     public string $type = 'success';
 
-    public string $message;
+    #[LiveProp(writable: true)]
+    public string $message = '';
 
     /*
         #[ExposeInTemplate('alert_type')]
@@ -76,6 +85,20 @@ final class Alert
     public function getTemplate(): string
     {
         return 'components/Alert.html.twig';
+    }
+
+    // Component actions is are real Symfony controllers. Internally, they are processed 
+    // identically to a normal controller method that you would create with a route.
+
+    // For example, you can use action autowiring
+
+    #[LiveAction]
+    public function saveForm(LoggerInterface $logger, #[LiveArg] int $id, #[LiveArg('itemName')] string $name): void
+    {
+        $logger->info("ID: {$id} Item Name: {$name}");
+
+        // Artificial delay so the action-specific loading indicator is visible
+        usleep(1_000_000);
     }
 
     // If you need to modify/validate data before it's mounted on the component use a 
