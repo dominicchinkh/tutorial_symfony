@@ -91,6 +91,12 @@
             ".env.dev"
         ]
     },
+    "symfony/form": {
+        "version": "8.1",
+        "recipe": {
+            "version": "7.2"
+        }
+    },
     "symfony/framework-bundle": {
         "version": "8.1",
         "recipe": {
