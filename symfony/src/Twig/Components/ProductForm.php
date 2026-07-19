@@ -33,6 +33,10 @@ final class ProductForm extends AbstractController
     #[LiveAction]
     public function save(EntityManagerInterface $entityManager)
     {
+        // This works!
+        //   the form will be submitted automatically after this method, now with the new description
+        $this->formValues['description'] = 'some auto-generated-description';
+
         // Submit the form. If validation fails, an exception is thrown
         // and the component is automatically re-rendered with the errors
         $this->submitForm();
@@ -41,6 +45,8 @@ final class ProductForm extends AbstractController
         $product = $this->getForm()->getData();
         $entityManager->persist($product);
         $entityManager->flush();
+
+        $this->resetForm();
 
         $this->addFlash('success', 'product saved!');
 

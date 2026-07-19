@@ -1,5 +1,9 @@
 <div {{ attributes }}
 >
+    {#
+        If you prefer, you can submit the form via a Symfony controller. To do 
+        this, create your controller like normal, including the submit logic
+    #}
     {{ form_start(form, {
         attr: {
             'data-action': 'live#action:prevent',
