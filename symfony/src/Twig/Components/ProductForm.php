@@ -12,13 +12,15 @@ use Symfony\UX\LiveComponent\Attribute\LiveAction;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
 use Symfony\UX\LiveComponent\ComponentWithFormTrait;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
+use Symfony\UX\LiveComponent\LiveCollectionTrait;
 
 #[AsLiveComponent]
 final class ProductForm extends AbstractController
 {
-    use DefaultActionTrait;
     use ComponentWithFormTrait;
-
+    use DefaultActionTrait;
+    use LiveCollectionTrait;
+    
     /**
      * The initial data used to create the form.
      */
