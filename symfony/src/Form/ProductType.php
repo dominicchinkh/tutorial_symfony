@@ -35,6 +35,13 @@ class ProductType extends AbstractType
 
             ->add('comments', LiveCollectionType::class, [
                 'entry_type' => CommentFormType::class,
+                'label' => false,
+                'button_delete_options' => [
+                    'label' => 'X',
+                    'attr' => [
+                        'class' => 'btn btn-outline-danger',
+                    ],
+                ],
                 'allow_add' => true,
                 'allow_delete' => true,
                 'by_reference' => false,
