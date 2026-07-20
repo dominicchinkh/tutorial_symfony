@@ -44,5 +44,28 @@
     {% set translation_domain = false %}
 
     {{ block('button_widget') }}
-    
+
 {% endblock live_collection_button_delete_widget %}
+
+{# 
+   By default the add button is placed after the items (the comments in our case). 
+   This moves it before them. 
+#}
+{%- block live_collection_widget -%}
+    {%- if button_add is defined and not button_add.rendered -%}
+        {{ form_row(button_add) }}
+    {%- endif -%}
+    {{ block('form_widget') }}
+{%- endblock -%}
+
+{#
+    Add a div around each row
+#}
+{%- block live_collection_entry_row -%}
+    <div class="dominic-div">
+        {{ block('form_row') }}
+        {%- if button_delete is defined and not button_delete.rendered -%}
+            {{ form_row(button_delete) }}
+        {%- endif -%}
+    </div>
+{%- endblock -%}
