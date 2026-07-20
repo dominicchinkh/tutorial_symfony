@@ -5,12 +5,14 @@ namespace App\Twig\Components;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveAction;
 use Symfony\UX\LiveComponent\Attribute\LiveArg;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
 use Symfony\UX\TwigComponent\Attribute\FromMethod;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
+use Symfony\UX\LiveComponent\ValidatableComponentTrait;
 use Symfony\UX\TwigComponent\Attribute\PostMount;
 use Symfony\UX\TwigComponent\Attribute\PreMount;
 
@@ -29,10 +31,19 @@ use Symfony\UX\TwigComponent\Attribute\PreMount;
 final class Alert extends AbstractController
 {
     use DefaultActionTrait;
+    use ValidatableComponentTrait;
 
+    /*
+        The component will now be automatically validated on each render, but in a smart way: a property will 
+        only be validated once its "model" has been updated on the frontend. 
+
+        Use [Assert\Valid] on nested objects
+     */
+    #[Assert\Choice(choices: ['success', 'danger'])]
     public string $type = 'success';
 
     #[LiveProp(writable: true)]
+    #[Assert\NotBlank]
     public string $message = '';
 
     /*
@@ -93,12 +104,16 @@ final class Alert extends AbstractController
     // For example, you can use action autowiring
 
     #[LiveAction]
-    public function saveForm(LoggerInterface $logger, #[LiveArg] int $id, #[LiveArg('itemName')] string $name): void
+    public function saveForm(LoggerInterface $logger, #[LiveArg] int $id, #[LiveArg('message')] string $message): void
     {
-        $logger->info("ID: {$id} Item Name: {$name}");
+        $logger->info("ID: {$id} Message: {$message}");
 
         // Artificial delay so the action-specific loading indicator is visible
         usleep(1_000_000);
+
+        // You can also trigger validation of your entire object manually in an action
+        $this->message = $message;
+        $this->validate();
     }
 
     // If you need to modify/validate data before it's mounted on the component use a 

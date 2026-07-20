@@ -77,6 +77,13 @@
 >
     <div>
         <h4>Message</h4>
+
+        {% if _errors.has('message') %}
+            <div class="error" style="color: red;">
+                {{ _errors.get('message') }}
+            </div>
+        {% endif %}
+
         <!-- component HTML -->
         {{ message }}
 
@@ -159,7 +166,9 @@
                 In your component, to allow each argument to be passed, add the #[LiveArg] attribute
             #}
             data-live-id-param="123"
-            data-live-item-name-param="CustomItem"
+
+            {# Submitting an empty message to trigger the validation error #}
+            data-live-message-param=""
 
             data-loading="action(saveForm)|addAttribute(disabled)"
         >Save form</button>
