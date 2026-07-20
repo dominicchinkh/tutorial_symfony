@@ -167,7 +167,10 @@
             #}
             data-live-id-param="123"
 
-            {# Submitting an empty message to trigger the validation error #}
+            {# 
+                Submitting an empty message to trigger the validation error 
+                Validation happens in the App\Twig\Components\Alert:saveForm method
+            #}
             data-live-message-param=""
 
             data-loading="action(saveForm)|addAttribute(disabled)"

@@ -114,6 +114,9 @@ final class Alert extends AbstractController
         // You can also trigger validation of your entire object manually in an action
         $this->message = $message;
         $this->validate();
+
+        // If you want to reset the validation errors, you can use the resetValidation() method
+        // $this->resetValidation();
     }
 
     // If you need to modify/validate data before it's mounted on the component use a 
