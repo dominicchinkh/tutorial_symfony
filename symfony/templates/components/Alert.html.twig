@@ -2,6 +2,11 @@
     <strong>{{ message }}</strong>
 {% endmacro %}
 
+{% macro placeholder(props) %}
+    {# This content will (only) be rendered as loading content #}
+    <span class="loading-row">Loading stage: {{props.message}}</span>
+{% endmacro %}
+
 {#
     ALL variables from the upper component are available inside the content of the 
     lower component. However, because variables are merged, any variables with the 
@@ -74,6 +79,18 @@
             <twig:Dialog class="foo" title:class="bar" />
     #}
     {{ attributes.nested('title') }}
+
+    {#
+        If a component is heavy to render, you can defer rendering it until after the page 
+        has loaded
+    #}
+    loading="defer"
+
+    {#
+        `loading="lazy"` defers the loading of the component until it's in the viewport. This 
+        is useful for components that are far down the page and are not needed until the user 
+        scrolls to them.
+    #}
 >
     <div>
         <h4>Message</h4>

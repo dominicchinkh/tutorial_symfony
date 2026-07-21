@@ -10,6 +10,7 @@ use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveAction;
 use Symfony\UX\LiveComponent\Attribute\LiveArg;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
+use Symfony\UX\LiveComponent\Attribute\PreReRender;
 use Symfony\UX\TwigComponent\Attribute\FromMethod;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
 use Symfony\UX\LiveComponent\ValidatableComponentTrait;
@@ -96,6 +97,13 @@ final class Alert extends AbstractController
     public function getTemplate(): string
     {
         return 'components/Alert.html.twig';
+    }
+
+    #[PreReRender]
+    public function simulateSlowRender(): void
+    {
+        // Artificial delay so the defer/lazy placeholder is visible
+        usleep(2_000_000);
     }
 
     // Component actions is are real Symfony controllers. Internally, they are processed 
