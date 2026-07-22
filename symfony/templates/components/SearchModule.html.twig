@@ -1,0 +1,9 @@
+<div{{ attributes }}>
+    <h4>Search module</h4>
+
+    {#
+        when the user changes the value of the query prop, a query parameter in the URL will be updated 
+        to reflect the new state of your component, for example: https://my.domain/search?query=my+search+string
+    #}
+    <input type="text" data-model="query" value="{{ query }}">
+</div>
