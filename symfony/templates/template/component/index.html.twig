@@ -208,14 +208,8 @@
 <div>
     <h2>Search module</h2>
     <div>
-        <h3>Scalar URL binding</h3>
-        {# <twig:SearchModule query="pencil"></twig:SearchModule> #}
-        <twig:SearchModule query="pencil"></twig:SearchModule>
-    </div>
-
-    <div>
-        <h3>Array and object URL bindings</h3>
-        <twig:AdvancedSearchModule
+        <h3>Scalar, array, and object URL bindings</h3>
+        <twig:SearchModule
             query="pencil"
             :tags="['fiction', 'science']"
             :filters="search_filters"

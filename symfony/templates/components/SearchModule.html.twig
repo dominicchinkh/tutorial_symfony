@@ -2,8 +2,74 @@
     <h4>Search module</h4>
 
     {#
-        when the user changes the value of the query prop, a query parameter in the URL will be updated 
-        to reflect the new state of your component, for example: https://my.domain/search?query=my+search+string
+        URL bindings support scalars, arrays, and objects. As you interact, the query
+        string is updated via history.replaceState(), for example:
+
+        ?query=pencil
+        &tags[0]=fiction&tags[1]=science
+        &filters[category]=books&filters[minPrice]=10
     #}
-    <input type="text" data-model="query" value="{{ query }}">
+
+    <div>
+        <label for="search-query">Query (scalar)</label>
+        <input
+            id="search-query"
+            type="search"
+            data-model="query"
+            value="{{ query }}"
+        >
+    </div>
+
+    <fieldset>
+        <legend>Tags (array)</legend>
+        {% for tag in this.availableTags %}
+            <div>
+                <input
+                    type="checkbox"
+                    id="search-tag-{{ tag }}"
+                    data-model="tags"
+                    value="{{ tag }}"
+                    {% if tag in tags %}checked{% endif %}
+                >
+                <label for="search-tag-{{ tag }}">{{ tag }}</label>
+            </div>
+        {% endfor %}
+    </fieldset>
+
+    <fieldset>
+        <legend>Filters (object)</legend>
+
+        <div>
+            <label for="search-category">Category</label>
+            <select id="search-category" data-model="filters.category">
+                {% for value, label in this.availableCategories %}
+                    <option value="{{ value }}" {% if filters.category == value %}selected{% endif %}>
+                        {{ label }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div>
+            <label for="search-min-price">Min price</label>
+            <input
+                id="search-min-price"
+                type="number"
+                min="0"
+                data-model="filters.minPrice"
+                value="{{ filters.minPrice }}"
+            >
+        </div>
+    </fieldset>
+
+    <dl>
+        <dt>Current query</dt>
+        <dd><code>{{ query ?: '(empty)' }}</code></dd>
+
+        <dt>Current tags</dt>
+        <dd><code>{{ tags|json_encode }}</code></dd>
+
+        <dt>Current filters</dt>
+        <dd><code>{{ { category: filters.category, minPrice: filters.minPrice }|json_encode }}</code></dd>
+    </dl>
 </div>
