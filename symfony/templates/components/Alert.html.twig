@@ -2,6 +2,9 @@
     <strong>{{ message }}</strong>
 {% endmacro %}
 
+{#
+    When loading-template or loadingContent is defined, the placeholder macro is ignored.
+#}
 {% macro placeholder(props) %}
     {# This content will (only) be rendered as loading content #}
     <span class="loading-row">Loading stage: {{props.message}}</span>

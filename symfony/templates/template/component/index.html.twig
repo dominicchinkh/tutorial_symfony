@@ -52,18 +52,31 @@
             those can be rendered as attributes 
 
             Note: This would pass withCloseButton (true) props to the Alert component
+
+            Note: You can use the `loading-template` option to point to a template
         #}
+
         <twig:Alert 
             id="custom-alert-id" 
             message="Hello Twig Components!"
             loading="defer"
             withCloseButton 
+            loading-template="components/spinning-wheel.html.twig"
         >
             {# 
                 When you add content between the <twig:Alert> open and close tag, it's 
                 passed to your component template as the block called content. 
             #}
             I'm writing <strong>HTML</strong> right here!
+
+            {# 
+                When `loadingContent` is defined, the `loading-template` is ignored.
+
+                <twig:block name="loadingContent">
+                    Custom Loading Content...
+                </twig:block> 
+            #}
+
         </twig:Alert>
     </div>
 
@@ -97,11 +110,21 @@
 
     <div>
         <h3>Button:RandomNumber (Live Components)</h3>
+
+        {#
+            You can also use "polling" to continually refresh a component. This will make a request 
+            every 2 seconds to re-render the component.
+
+            You can change this by adding a delay() modifier.
+
+              data-poll="delay(500)|$render"
+        #}
         <twig:Button:RandomNumber 
             max="500" 
             :item1="items[0]" :item2="items[0]" :items="items" 
             :notification="notification"
             :product="products[0]" :products="products" 
+            data-poll
         />
     </div>
 
