@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Dto\Item;
 use App\Dto\Notification;
+use App\Dto\SearchFilters;
 use App\Repository\ProductRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -87,9 +88,10 @@ final class TemplateController extends AbstractController
         $products     = $this->productRepository->findAll();
 
         return $this->render('template/component/index.html.twig', [
-            'items'        => $items,
-            'notification' => $notification,
-            'products'     => $products
+            'items'           => $items,
+            'notification'    => $notification,
+            'products'        => $products,
+            'search_filters'  => new SearchFilters('books', 10),
         ]);
     }
 }

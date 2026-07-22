@@ -1,0 +1,75 @@
+<div{{ attributes }}>
+    <h4>Advanced search module</h4>
+
+    {#
+        URL bindings support scalars, arrays, and objects. As you interact, the query
+        string is updated via history.replaceState(), for example:
+
+        ?query=pencil
+        &tags[0]=fiction&tags[1]=science
+        &filters[category]=books&filters[minPrice]=10
+    #}
+
+    <div>
+        <label for="advanced-search-query">Query (scalar)</label>
+        <input
+            id="advanced-search-query"
+            type="search"
+            data-model="query"
+            value="{{ query }}"
+        >
+    </div>
+
+    <fieldset>
+        <legend>Tags (array)</legend>
+        {% for tag in this.availableTags %}
+            <div>
+                <input
+                    type="checkbox"
+                    id="advanced-search-tag-{{ tag }}"
+                    data-model="tags"
+                    value="{{ tag }}"
+                    {% if tag in tags %}checked{% endif %}
+                >
+                <label for="advanced-search-tag-{{ tag }}">{{ tag }}</label>
+            </div>
+        {% endfor %}
+    </fieldset>
+
+    <fieldset>
+        <legend>Filters (object)</legend>
+
+        <div>
+            <label for="advanced-search-category">Category</label>
+            <select id="advanced-search-category" data-model="filters.category">
+                {% for value, label in this.availableCategories %}
+                    <option value="{{ value }}" {% if filters.category == value %}selected{% endif %}>
+                        {{ label }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div>
+            <label for="advanced-search-min-price">Min price</label>
+            <input
+                id="advanced-search-min-price"
+                type="number"
+                min="0"
+                data-model="filters.minPrice"
+                value="{{ filters.minPrice }}"
+            >
+        </div>
+    </fieldset>
+
+    <dl>
+        <dt>Current query</dt>
+        <dd><code>{{ query ?: '(empty)' }}</code></dd>
+
+        <dt>Current tags</dt>
+        <dd><code>{{ tags|json_encode }}</code></dd>
+
+        <dt>Current filters</dt>
+        <dd><code>{{ { category: filters.category, minPrice: filters.minPrice }|json_encode }}</code></dd>
+    </dl>
+</div>
