@@ -1,6 +1,12 @@
 <div{{ attributes }}>
     <h4>Search module</h4>
 
+    {% if _errors.has('query') %}
+        <div class="error" style="color: red;">
+            {{ _errors.get('query') }}
+        </div>
+    {% endif %}
+
     {#
         URL bindings support scalars, arrays, and objects. As you interact, the query
         string is updated via history.replaceState(), for example:
