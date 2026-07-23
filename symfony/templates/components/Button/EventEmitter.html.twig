@@ -1,0 +1,32 @@
+<div {{ attributes.defaults(stimulus_controller('event_detector')) }}>
+    
+    {# 
+        Emitting event from Twig:
+
+        To emit an event to only yourself:
+            data-action="live#emitSelf"
+
+        If you want to emit an event to only the parent components:
+            data-action="live#emitUp"
+
+        If you want to emit an event to only components with a specific name:
+            data-action="live#emit"
+            data-live-event-param="name(ProductList)|productAdded"
+    #}
+
+    <button
+        data-action="live#emit"
+        data-live-event-param="productAdded"
+        data-live-price-param="12" 
+    >
+        This is a event emitter button {{ productPrice }}
+    </button>
+
+    <button
+        data-action="live#action"
+        data-live-action-param="saveProduct"
+    >
+        Save product {{ productPrice }}
+    </button>
+</div>
+
