@@ -194,4 +194,20 @@ final class Alert extends AbstractController
         // Any remaining data will become attributes on the component
         return $data;
     }
+
+    /*
+     *   PostHydrate Hook
+     *     Called immediately after the component's state is loaded from the client. This 
+     *     is useful if you need to process or adjust the data once it's been hydrated.
+     *
+     *   PreDehydrate Hook
+     *     Triggered just before your component's state is sent back to the client. You can 
+     *     use this to modify or clean up the data before it's serialized and returned to the 
+     *     client.
+     *
+     *   PreReRender Hook
+     *     Called before your component is re-rendered during an HTTP request. It does not run 
+     *     during the initial render but is helpful when you need to adjust the state before 
+     *     sending it back to the client for re-rendering.
+     */
 }
