@@ -43,7 +43,15 @@ final class Alert extends AbstractController
     #[Assert\Choice(choices: ['success', 'danger'])]
     public string $type = 'success';
 
-    #[LiveProp(writable: true)]
+    /*
+        If you want to run custom code after a specific LiveProp is updated, you can do it by adding an onUpdated 
+        option set to a public method name on the component
+
+        If you're allowing object properties to be writable, you can also listen to the change of one specific key
+          #[LiveProp(writable: ['title', 'content'], onUpdated: ['title' => 'onTitleUpdated'])]
+          
+     */
+    #[LiveProp(writable: true, onUpdated: 'onMessageUpdated')]
     #[Assert\NotBlank]
     public string $message = '';
 
@@ -210,4 +218,10 @@ final class Alert extends AbstractController
      *     during the initial render but is helpful when you need to adjust the state before 
      *     sending it back to the client for re-rendering.
      */
+
+    public function onMessageUpdated($previousValue): void
+    {
+        // $this->message already contains a new value
+        // and its previous value is passed as an argument
+    }
 }
