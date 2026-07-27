@@ -1,5 +1,8 @@
 <div {{ attributes }}>
-    <input data-model="listName">
+    <label>
+        List name (parent):
+        <input data-model="listName" type="text">
+    </label>
 
     <form data-action="live#action:prevent" data-live-action-param="addTodo">
         <input data-model="newTodo" placeholder="Add a todo">
@@ -9,8 +12,17 @@
     <ul>
         {% for todo in todos %}
             <li>{{ todo }}</li>
-        {% endfor %} 
+        {% endfor %}
     </ul>
 
-    <twig:TodoFooter count="{{ todos|length }}" />
+    {#
+        Specify the name of the child prop with the parentProp:childProp syntax.
+
+        If your child component has multiple models, separate each with a space. For example:
+            dataModel: 'user.firstName:first user.lastName:last'
+    #}
+    <twig:TodoFooter
+        count="{{ todos|length }}"
+        dataModel="listName:listName"
+    />
 </div>

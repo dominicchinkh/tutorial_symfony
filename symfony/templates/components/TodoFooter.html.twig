@@ -1,3 +1,17 @@
 <div {{ attributes }}>
-    <p>Total TODO items: {{ count }}</p>
+    <button
+        type="button"
+        data-action="live#action"
+        data-live-action-param="toggleVisibility"
+    >
+        {{ isVisible ? 'Hide' : 'Show' }} footer
+    </button>
+
+    {% if isVisible %}
+        <p>Total TODO items: {{ count }}</p>
+        <label>
+            List name (child → parent via dataModel):
+            <input data-model="listName" type="text">
+        </label>
+    {% endif %}
 </div>
