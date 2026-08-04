@@ -33,7 +33,7 @@
 
     {#
         If you need to generate absolute URLs (for example when rendering templates for emails or 
-        RSS feeds), use the url() function, which takes the same arguments as path()
+        RSS feeds), use the absolute_url()/url() function, which takes the same arguments as path()
     #}
     <div>
         <h3>Absolute URL</h3>
@@ -44,6 +44,28 @@
 
             <p>{{ post.excerpt }}</p>
         {% endfor %}
+    </div>
+
+    {#
+        For most "reusable UI unit" needs (like the recent-articles example below), prefer 
+        Twig Components
+    #}
+    <div id="sidebar">
+        <h3>Embedding controllers</h3>
+        {# 
+            if the controller is associated with a route, use the path() or url() functions 
+
+                {{ render(path('latest_articles', {max: 3})) }}
+                {{ render(url('latest_articles', {max: 3})) }}
+        #}
+
+        {# 
+            if you don't want to expose the controller with a public URL, use the controller() 
+            function to define the controller to execute 
+        #}
+        {{ render(controller(
+            'App\\Controller\\TemplateController::recentArticles', {max: 3}
+        )) }}
     </div>
 
 {% endblock %}

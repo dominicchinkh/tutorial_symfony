@@ -3,4 +3,17 @@
 {% block page_contents %}
     <h3>Hello {{ user_first_name }}!</h3>
     <p>You have {{ notifications|length }} new notifications.</p>
+
+    {# 
+        The contents of this variable are dumped inside the page contents
+        and they are visible on the web page 
+    #}
+    {{ dump(notifications) }}
+
+    {# 
+        Optionally, use named arguments to display them as labels next to
+       the dumped contents 
+    #}
+    {{ dump({ notifications: notifications, user: app.user }) }}
+
 {% endblock %}
