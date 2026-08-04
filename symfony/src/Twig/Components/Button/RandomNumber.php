@@ -68,7 +68,7 @@ class RandomNumber
     public ?\DateTimeInterface $publishOn = null;
 
     /*
-        If you want the user to be able to change the Post and certain properties, use 
+        If you want the user to be able to change the Item and certain properties, use 
         the special LiveProp::IDENTITY constant:
         
         #[LiveProp(writable: [LiveProp::IDENTITY, 'name', 'price'])]

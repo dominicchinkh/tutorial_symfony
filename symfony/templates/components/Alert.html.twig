@@ -3,7 +3,20 @@
 {% endmacro %}
 
 {#
+    You can define some content to be rendered while the component is loading, either inside the 
+    component template (the placeholder macro) or from the calling template (the loading-template 
+    attribute and the loadingContent block)
+
     When loading-template or loadingContent is defined, the placeholder macro is ignored.
+
+    For example:
+
+        <twig:SomeHeavyComponent loading="defer" loading-template="spinning-wheel.html.twig" />
+
+        <twig:SomeHeavyComponent loading="defer">
+            <twig:block name="loadingContent">Custom Loading Content...</twig:block>
+        </twig:SomeHeavyComponent>
+
 #}
 {% macro placeholder(props) %}
     {# This content will (only) be rendered as loading content #}
@@ -27,7 +40,13 @@
 <div 
     {{ attributes.defaults({'data-controller': 'alert'}) }}
     
-    {# data-controller="alert" #}
+    {# 
+        // Not recommened: If you hardcode the attribute and also output {{ attributes }} 
+        // later to catch other parent properties, you risk creating duplicate data-controller 
+        // HTML attributes
+
+        data-controller="alert" 
+    #}
 
     {# 
         // Optionally,
@@ -71,6 +90,9 @@
     {#
         Nested attributes:
 
+        Render as:
+            <twig:Dialog class="foo" title:class="bar" />
+
         In Twig component (e.g. Dialog):
             <div {{ attributes }}>
                 <div {{ attributes.nested('title') }}>
@@ -78,8 +100,12 @@
                 </div>
             </div>
 
-        Render as:
-            <twig:Dialog class="foo" title:class="bar" />
+        In HTML:
+            <div class="foo">
+                <div class="bar">
+                    Default Title
+                </div>
+            </div>
     #}
     {{ attributes.nested('title') }}
 

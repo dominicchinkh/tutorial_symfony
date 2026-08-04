@@ -141,6 +141,8 @@ final class Alert extends AbstractController
     #[PreMount]
     public function preMount(array $data): array
     {
+        // `OptionsResolver` is a component used to configure, validate, and apply default values 
+        // to arrays of options.
         $resolver = new OptionsResolver();
 
         // In its default configuration, the OptionsResolver treats all props. However, 

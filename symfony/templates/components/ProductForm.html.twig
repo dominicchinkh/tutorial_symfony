@@ -5,6 +5,29 @@
     {#
         If you prefer, you can submit the form via a Symfony controller. To do 
         this, create your controller like normal, including the submit logic
+
+        data-action: 
+            This is the standard Stimulus HTML attribute used to listen for DOM 
+            events. Because this is applied to a <form> tag, Stimulus automatically
+            assumes you are listening for the submit event
+
+        live:
+            This targets the live Stimulus controller, which is the JavaScript engine
+            running under the hood of Symfony UX LiveComponent
+
+        #action:
+            This tells the live controller to execute its generic action() JavaScript 
+            method when the form is submitted
+
+        :prevent:
+            This is a Stimulus event modifier. It is the exact equivalent of writing 
+            event.preventDefault() in vanilla JavaScript. It stops the browser from 
+            doing a hard page reload
+
+        'data-live-action-param': 'save'
+            Send an AJAX request to your server, specifically targeting a PHP method 
+            in the component mapped with the #[LiveAction] attribute (e.g., public 
+            function save()).
     #}
     {{ form_start(form, {
         attr: {

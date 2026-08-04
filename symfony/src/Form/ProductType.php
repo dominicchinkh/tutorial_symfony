@@ -26,12 +26,14 @@ class ProductType extends AbstractType
                 'trim' => false,
             ])
 
-            // By default, the PasswordType does not re-fill the <input type="password"> after a submit.
-            // To fix this, set the always_empty option to false in your form:
-
-            // ->add('plainPassword', PasswordType::class, [
-            //     'always_empty' => false,
-            // ])
+            /*
+             * By default, the PasswordType does not re-fill the <input type="password"> after a submit.
+             * To fix this, set the always_empty option to false in your form:
+             *
+             *   ->add('plainPassword', PasswordType::class, [
+             *       'always_empty' => false,
+             *   ])
+             */
 
             ->add('comments', LiveCollectionType::class, [
                 'entry_type' => CommentFormType::class,
@@ -44,6 +46,10 @@ class ProductType extends AbstractType
                 ],
                 'allow_add' => true,
                 'allow_delete' => true,
+
+                // Setting 'by_reference' => false forces Symfony to call the addComment()
+                // and removeComment() methods on your Product entity, rather than just 
+                // silently pushing items into the existing collection
                 'by_reference' => false,
             ])
         ;

@@ -47,7 +47,9 @@
                 Do not trigger model update until 3 characters are typed
 
                 <input data-model="min_length(3)|username" type="text" value="" /> 
+            #}
 
+            {#
                 Only trigger updates when value number is between 10 and 100
 
                 <input data-model="min_value(10)|max_value(100)|quantity" type="number" value="20" />
@@ -74,6 +76,9 @@
     </div>
 
     <div>
+        {#
+            `product` is an Entity
+        #}
         <h3>Product</h3>
         {% if product %}
             <div>
@@ -91,6 +96,9 @@
             <p>No product available.</p>
         {% endif %}
 
+        {#
+            `products` is an array of Product (an Entity)
+        #}
         <div>
             <h4>Products</h4>
             <ul>
@@ -102,6 +110,9 @@
     </div>
 
     <div>
+        {#
+            `item1` is a DTO
+        #}
         <h3>Item</h3>
         {% if item1 %}
             <div>
@@ -117,6 +128,9 @@
             <p>No item available.</p>
         {% endif %}
 
+        {#
+            `item2` is a DTO with hydrateWith/dehydrateWith
+        #}
         {% if item2 %}
             <div>
                 <input type="text"   data-model="item2.name" value="{{ item2.name }}">
@@ -131,6 +145,9 @@
             <p>No item available.</p>
         {% endif %}
 
+        {#
+            `items` is an array of Item (a DTO)
+        #}
         <div>
             <h4>Items</h4>
             <ul>
@@ -142,6 +159,9 @@
     </div>
 
     <div>
+        {#
+            `notification` is a DTO with hydration extension
+        #}
         <h3>Notification</h3>
         {% if notification %}
             <div>
@@ -159,6 +179,9 @@
     </div>
 
     <div>
+        {#
+            `todoItems` is an array of string
+        #}
         <h3>Todo Items</h3>
         <ul>
             {# Multiple selection #}
@@ -190,7 +213,9 @@
 
     <div>
         {#
-            Clicking the button will change a mode live property on your component to the value edit. The 
+            `mode` is a string
+
+            Clicking the button will change `mode` live property on your component to the value edit. The 
             `data-action="live#update"` is Stimulus code that triggers the update
         #}
         <h3>Update model manually</h3>
@@ -203,6 +228,9 @@
     </div>
 
     <div>
+        {#
+            `publishOn` is a datetime with the format 'Y-m-d'
+        #}
         <h3>Publish On</h3>
         <input type="date" data-model="publishOn">
     </div>
