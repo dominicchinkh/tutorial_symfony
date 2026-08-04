@@ -1,0 +1,21 @@
+{# @admin/layout.html.twig — lives in backend/templates/ #}
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>{% block title %}Admin Layout{% endblock %}</title>
+    </head>
+    <body>
+        <header>
+            <p>Admin namespace layout (<code>@admin</code>)</p>
+        </header>
+        <nav>
+            <ul>
+                <li><a href="{{ path('template-namespace-admin') }}">Dashboard</a></li>
+            </ul>
+        </nav>
+        <main>
+            {% block body %}{% endblock %}
+        </main>
+    </body>
+</html>

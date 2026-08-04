@@ -1,0 +1,10 @@
+{# @email/welcome.html.twig #}
+{% extends '@email/layout.html.twig' %}
+
+{% block title %}Welcome Email{% endblock %}
+
+{% block body %}
+    <h1>Welcome, {{ user_first_name }}!</h1>
+    <p>This template is loaded from the <code>@email</code> Twig namespace.</p>
+    <p>Physical path: <code>email/default/templates/welcome.html.twig</code></p>
+{% endblock %}

@@ -191,4 +191,36 @@ final class TemplateController extends AbstractController
             'search_filters'  => new SearchFilters('books', 10),
         ]);
     }
+
+    /*
+     *  Template Namespaces
+     *
+     *  Extra directories are configured in twig.paths (config/packages/twig.yaml).
+     *  Use @ + namespace to refer to namespaced templates, e.g.:
+     *    @email/welcome.html.twig  -> email/default/templates/welcome.html.twig
+     *    @admin/dashboard.html.twig -> backend/templates/dashboard.html.twig
+     *
+     *  Inspect paths with:
+     *    php bin/console debug:twig @email/welcome.html.twig
+     *    php bin/console debug:twig @admin/dashboard.html.twig
+     */
+    #[Route('/namespace', name: 'namespace', methods: ['GET'])]
+    public function namespace(): Response
+    {
+        return $this->render('template/namespace/index.html.twig');
+    }
+
+    #[Route('/namespace/email', name: 'namespace-email', methods: ['GET'])]
+    public function namespaceEmail(): Response
+    {
+        return $this->render('@email/welcome.html.twig', [
+            'user_first_name' => 'Dominic',
+        ]);
+    }
+
+    #[Route('/namespace/admin', name: 'namespace-admin', methods: ['GET'])]
+    public function namespaceAdmin(): Response
+    {
+        return $this->render('@admin/dashboard.html.twig');
+    }
 }

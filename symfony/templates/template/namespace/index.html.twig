@@ -1,0 +1,27 @@
+{% extends 'template/layout.html.twig' %}
+
+{% block page_contents %}
+    <h3>Template Namespaces</h3>
+    <p>
+        Extra template directories are configured under <code>twig.paths</code>.
+        Namespaced templates use the <code>@</code> + namespace syntax.
+    </p>
+    <ul>
+        <li>
+            <a href="{{ path('template-namespace-email') }}">
+                <code>@email/welcome.html.twig</code>
+            </a>
+            — <code>email/default/templates/</code>
+        </li>
+        <li>
+            <a href="{{ path('template-namespace-admin') }}">
+                <code>@admin/dashboard.html.twig</code>
+            </a>
+            — <code>backend/templates/</code>
+        </li>
+    </ul>
+    <p>
+        Bundle templates also get an automatic namespace after the bundle name
+        (e.g. <code>@AcmeBlog/user/profile.html.twig</code>).
+    </p>
+{% endblock %}

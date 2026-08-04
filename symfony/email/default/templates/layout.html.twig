@@ -1,0 +1,16 @@
+{# @email/layout.html.twig — lives in email/default/templates/ #}
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>{% block title %}Email Layout{% endblock %}</title>
+    </head>
+    <body>
+        <header>
+            <p>Email namespace layout (<code>@email</code>)</p>
+        </header>
+        <main>
+            {% block body %}{% endblock %}
+        </main>
+    </body>
+</html>
