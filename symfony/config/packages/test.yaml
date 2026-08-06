@@ -1,0 +1,31 @@
+# When running the application, Symfony loads the configuration files in this order (the last 
+# files can override the values set in the previous ones):
+
+# 1. The files in config/packages/*.<extension>;
+# 2. the files in config/packages/<environment-name>/*.<extension>;
+# 3. config/services.<extension>;
+# 4. config/services_<environment-name>.<extension>.
+
+parameters:
+  app.parameter:
+      value: 'in config/packages/test.yaml'
+
+      # Use the special syntax %env(ENV_VAR_NAME)% to reference environment variables. The values 
+      # of these options are resolved at runtime (only once per request, to not impact performance) 
+      # so you can change the application behavior without having to clear the cache
+
+      # by convention the env var names are always uppercase
+      secret: '%env(APP_SECRET)%'
+
+# You can also define options for different environments in a single configuration file using 
+# the special when keyword:
+
+when@prod:
+  parameters:
+    app.parameter:
+        value: 'in config/packages/test.yaml for prod'
+
+when@dev:
+  parameters:
+    app.parameter:
+        value: 'in config/packages/test.yaml for dev'

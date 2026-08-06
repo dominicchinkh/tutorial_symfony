@@ -1,0 +1,3 @@
+parameters:
+    app.parameter:
+        value: 'in config/packages/dev/test.yaml'

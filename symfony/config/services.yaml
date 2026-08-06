@@ -8,11 +8,61 @@
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
 
+    # Once defined, you can reference this parameter value from any other configuration file using 
+    # a special syntax: wrap the parameter name in two % (e.g. %app.admin_email%):
+
+    # The parameter name is an arbitrary string (the 'app.' prefix is recommended
+    # to better differentiate your parameters from Symfony parameters).
+    app.admin_email: 'something@example.com'
+
+    # boolean parameters
+    app.enable_v2_protocol: true
+
+    # array/collection parameters
+    app.supported_locales: ['en', 'es', 'fr']
+
+    # binary content parameters (encode the contents with base64_encode())
+    app.some_parameter: !!binary VGhpcyBpcyBhIEJlbGwgY2hhciAH
+
+    # PHP constants as parameter values
+    app.some_constant: !php/const PHP_INT_MAX
+    app.another_constant: !php/const App\Constant\AppConstant::PULL_REQUEST_STATE_START
+
+    # Enum case as parameter values
+    app.some_enum: !php/enum App\Enum\PullRequestState::Merged
+
+    # This value will be overwritten in config/services_dev.yaml
+    app.parameter:
+        value: 'in config/services.yaml'
+
+    # If your application tries to use an env var that hasn't been defined, you'll see an exception. 
+    # You can prevent that by defining a default value for the env var. To do so, define a parameter 
+    # with the same name as the env var using this syntax:
+
+    # if the SECRET env var value is not defined anywhere, Symfony uses this value
+    env(SECRET): 'some_secret'
+
+    # These environment variables are loaded via a service whose class implements EnvVarLoaderInterface
+    # App/Service/JsonEnvVarLoader
+
+    # Inspect with
+    #   php bin/console debug:container --env-vars
+
+    app.custom_env: '%env(JSON_APP_ENV)%'
+    app.custom_debug_mode: '%env(JSON_APP_DEBUG)%'
+    
 services:
     # default configuration for services in *this* file
     _defaults:
         autowire: true      # Automatically injects dependencies in your services.
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+
+        # If you inject the same parameters over and over again, use the services._defaults.bind option 
+        # instead. The arguments defined in that option are injected automatically whenever a service 
+        # constructor or controller action defines an argument with that exact name
+        
+        bind:
+            $projectDir: '%kernel.project_dir%'
 
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name
@@ -23,3 +73,18 @@ services:
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+
+imports:
+    - { resource: 'legacy_config.php' }
+
+    # `glob` expressions are also supported to load multiple files
+    - { resource: 'other/*.yaml' }
+
+    # `ignore_errors: not_found` silently discards errors if the loaded file doesn't exist
+    - { resource: 'my_config_file.yaml', ignore_errors: not_found }
+    
+    # `ignore_errors: true` silently discards all errors (including invalid code and not found)
+    - { resource: 'my_other_config_file.yaml', ignore_errors: true }
+
+    # Exclude specific files when using glob patterns
+    - { resource: 'services/*.yaml', exclude: ['services/legacy_*.yaml'] }

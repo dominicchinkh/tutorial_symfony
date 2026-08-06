@@ -1,0 +1,5 @@
+# This file is excluded in configuration
+
+# Check out config/services.yaml 
+#   imports:
+#     - { resource: 'services/*.yaml', exclude: ['services/legacy_*.yaml'] }
