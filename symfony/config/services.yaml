@@ -50,7 +50,83 @@ parameters:
 
     app.custom_env: '%env(JSON_APP_ENV)%'
     app.custom_debug_mode: '%env(JSON_APP_DEBUG)%'
+
+    #---------------------------------
+    # Environment Variable Processors
+
+    # Env vars can only be strings and your application may need other data types (integer, boolean, etc.). 
+    # Symfony solves this problem with "env var processors", which transform the original contents of the 
+    # given environment variables
+
+    # Check out https://symfony.com/doc/current/configuration/env_var_processors.html for all built-In environment 
+    # variable processors
     
+    # The following example uses the integer processor to turn the value of the HTTP_PORT env var into an 
+    # integer:
+    http_port: '%env(int:HTTP_PORT)%'
+
+    # Decodes the content of FOO, which is a base64 encoded string
+    # echo 'dominic' | base64 -w 0
+    env(JWT_PRIVATE_KEY_BASE64): ZG9taW5pYwo=
+    jwt_private_key: '%env(base64:JWT_PRIVATE_KEY_BASE64)%'
+    
+    # Decodes the content of ALLOWED_LANGUAGES, which is a JSON encoded string:
+    env(ALLOWED_LANGUAGES_1): '["en","de","es"]'
+    app_allowed_languages_1: '%env(json:ALLOWED_LANGUAGES_1)%'
+
+    # If the content of FOO includes container parameters (with the syntax %parameter_name%), it replaces 
+    # the parameters by their values:
+    sentry_host: '10.0.0.1'
+    env(SENTRY_DSN): 'http://%sentry_host%/project'
+    dsn: '%env(resolve:SENTRY_DSN)%'
+
+    # Decodes the content of ALLOWED_LANGUAGES, which is a CSV-encoded string and returns an array. An empty 
+    # string will result in an empty array:
+    env(ALLOWED_LANGUAGES_2): "en,de,es"
+    app_allowed_languages_2: '%env(csv:ALLOWED_LANGUAGES_2)%'
+
+    # Randomly shuffles values of the REDIS_NODES env var, which must be an array
+    env(REDIS_NODES): "127.0.0.1:6380,127.0.0.1:6381"
+    redis_nodes_list: [null, "%env(shuffle:csv:REDIS_NODES)%"]
+
+    # Returns the contents of a file whose path is the value of the FOO env var:
+    env(AUTH_FILE): '%kernel.project_dir%/config/env_var_processor/env.yaml'
+    auth_file: '%env(file:AUTH_FILE)%'
+
+    # require() the PHP file whose path is the value of the PHP_FILE env var and return the value returned 
+    # from it.
+    env(PHP_FILE): '%kernel.project_dir%/config/env_var_processor/auth.php'
+    php_file: '%env(require:PHP_FILE)%'
+
+    # Trims the content of FOO env var, removing whitespaces from the beginning and end of the string. This 
+    # is especially useful in combination with the file processor, as it'll remove newlines at the end of a file.
+    env(TRIMMED_ENV_FILE): '%kernel.project_dir%/config/env_var_processor/env.yaml'
+    trimmed_env: '%env(trim:file:TRIMMED_ENV_FILE)%'
+
+    # Retrieves the value associated with the key FOO from the array whose contents are stored in the BAR env var:
+    env(SECRETS_FILE): '%kernel.project_dir%/config/env_var_processor/secret.json'
+    database_password: '%env(key:database_password:json:file:SECRETS_FILE)%'
+    # if SECRETS_FILE contents are: {"database_password": "secret"} it returns "secret"
+
+    # Retrieves the value of the parameter fallback_param when the BAR env var is not available:
+    raw_key: '%env(JWT_PRIVATE_KEY_BASE64)%'
+    private_key: '%env(default:raw_key:file:PRIVATE_KEY)%'
+
+    # Parses an absolute URL and returns its components as an associative array.
+    env(POSTGRESQL_DATABASE_URL): "postgresql://db_user:db_password@127.0.0.1:5432/db_name?serverVersion=12.19&charset=utf8"
+    database_parts: '%env(url:POSTGRESQL_DATABASE_URL)%'
+
+    # Parses the query string part of the given URL and returns its components as an associative array.
+    database_queries: '%env(query_string:POSTGRESQL_DATABASE_URL)%'
+
+    # Tries to convert an environment variable to an actual \PullRequestState value
+    env(Review): 'review'
+    review_enum: '%env(enum:App\Enum\PullRequestState:Review)%'
+
+    # My customer env var processor
+    # Refer to App\DependencyInjection/LowercasingEnvVarProcessor
+    lower_cased_jwt_private_key: '%env(lowercase:JWT_PRIVATE_KEY_BASE64)%'
+
 services:
     # default configuration for services in *this* file
     _defaults:
