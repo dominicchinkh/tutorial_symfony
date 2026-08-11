@@ -150,6 +150,19 @@ services:
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
 
+    # Used by the microkernel compiler pass in index.php (setPublic / findTaggedServiceIds)
+    app.some_private_service:
+        class: App\Service\SomePrivateService
+        public: false
+
+    App\Service\TaggedServiceOne:
+        tags:
+            - { name: some_tag }
+
+    App\Service\TaggedServiceTwo:
+        tags:
+            - { name: some_tag, priority: 10 }
+
 imports:
     - { resource: 'legacy_config.php' }
 

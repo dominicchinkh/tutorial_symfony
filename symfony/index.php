@@ -9,6 +9,8 @@ use Symfony\Bundle\MonologBundle\MonologBundle;
 use Symfony\Bundle\SecurityBundle\SecurityBundle;
 use Symfony\Bundle\TwigBundle\TwigBundle;
 use Symfony\Bundle\WebProfilerBundle\WebProfilerBundle;
+use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Response;
@@ -21,6 +23,7 @@ use Symfony\UX\LiveComponent\LiveComponentBundle;
 use Symfony\UX\StimulusBundle\StimulusBundle;
 use Symfony\UX\TwigComponent\TwigComponentBundle;
 use Twig\Environment;
+
 
 require_once dirname(__DIR__).'/symfony/vendor/autoload_runtime.php';
 
@@ -40,7 +43,7 @@ require_once dirname(__DIR__).'/symfony/vendor/autoload_runtime.php';
  *  more details
  * 
  */
-class Kernel extends BaseKernel implements EventSubscriberInterface
+class Kernel extends BaseKernel implements EventSubscriberInterface, CompilerPassInterface
 {
     use MicroKernelTrait;
 
@@ -169,6 +172,25 @@ class Kernel extends BaseKernel implements EventSubscriberInterface
         return [
             KernelEvents::EXCEPTION => 'onKernelException',
         ];
+    }
+
+    //-------------------------------------------------------------------------------------------
+    // Compiler passes give you an opportunity to manipulate other service definitions that have 
+    // been registered with the service container
+
+    // Refer to https://symfony.com/doc/current/service_container/compiler_passes.html for more 
+    // information
+
+    public function process(ContainerBuilder $container): void
+    {
+        // In this method you can manipulate the service container:
+        // for example, changing some container service:
+        $container->getDefinition('app.some_private_service')->setPublic(true);
+
+        // Or processing tagged services:
+        foreach ($container->findTaggedServiceIds('some_tag') as $id => $tags) {
+            // ...
+        }
     }
 }
 
