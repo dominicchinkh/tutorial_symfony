@@ -192,6 +192,19 @@ class Kernel extends BaseKernel implements EventSubscriberInterface, CompilerPas
             // ...
         }
     }
+
+    //-------------------------------------------------------
+    // How to Override Symfony's default Directory Structure
+
+    public function getCacheDir(): string
+    {
+        return $this->getProjectDir().'/var/cache/'.$this->environment;
+    }
+
+    public function getLogDir(): string
+    {
+        return $this->getProjectDir().'/var/log';
+    }
 }
 
 return static function (array $context) {

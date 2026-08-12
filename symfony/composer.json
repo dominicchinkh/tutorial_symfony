@@ -48,7 +48,8 @@
             "symfony/runtime": true
         },
         "bump-after-update": true,
-        "sort-packages": true
+        "sort-packages": true,
+        "vendor-dir": "vendor"
     },
     "autoload": {
         "psr-4": {
@@ -92,7 +93,14 @@
         "symfony": {
             "allow-contrib": false,
             "require": "8.1.*"
-        }
+        },
+        "runtime": {
+            "dotenv_path": ".env"
+        },
+        "bin-dir": "bin",
+        "config-dir": "config",
+        "src-dir": "src",
+        "public-dir": "public"
     },
     "require-dev": {
         "symfony/debug-bundle": "8.1.*",
