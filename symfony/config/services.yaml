@@ -150,7 +150,7 @@ services:
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
 
-    # Used by the microkernel compiler pass in index.php (setPublic / findTaggedServiceIds)
+    # Used by the microkernel compiler pass in symfony/index.php (setPublic / findTaggedServiceIds)
     app.some_private_service:
         class: App\Service\SomePrivateService
         public: false
@@ -162,6 +162,48 @@ services:
     App\Service\TaggedServiceTwo:
         tags:
             - { name: some_tag, priority: 10 }
+
+    App\Service\ServiceService:
+        arguments:
+            # This tells the container that the $container argument to __construct should
+            # use the service whose id is service_container.
+
+            # Check with : php bin/console debug:container | grep service_container
+            
+            - '@service_container'
+
+            # String, numeric and boolean arguments can be passed "as is"
+            - 'Foo'
+            - true
+            - 7
+            - 3.14
+
+            # Constants can be built-in, user-defined, or Enums
+            - !php/const E_ALL
+            - !php/const PDO::FETCH_NUM
+            - !php/const Symfony\Component\HttpKernel\Kernel::VERSION
+            - !php/const App\Enum\PullRequestState::Start
+
+            # When not using autowiring, you can pass service arguments explicitly
+            - '@app.some_private_service'  # the leading '@' tells this is a service ID, not a string
+            - '@?app.some_private_service' # using '?' means to pass null if service doesn't exist
+
+            # Binary contents are passed encoded as base64 strings
+            - !!binary VGhpcyBpcyBhIEJlbGwgY2hhciAH
+
+            # Collections (arrays) can include any type of argument
+            -
+                first: !php/const true
+                second: 'Foo'
+
+# Each when@<env> block has its own scope and does not inherit _defaults from the main services section. 
+# Redefine _defaults in every when@<env> block where you need it
+
+# when@prod:
+#     services:
+#         _defaults:
+#             autowire: true
+#             autoconfigure: true
 
 imports:
     - { resource: 'legacy_config.php' }
