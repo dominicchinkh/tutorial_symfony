@@ -172,6 +172,9 @@ services:
             
             - '@service_container'
 
+            # using '?' means to pass null if service doesn't exist
+            # - '@?service_container'
+
             # String, numeric and boolean arguments can be passed "as is"
             - 'Foo'
             - true
@@ -195,6 +198,31 @@ services:
             -
                 first: !php/const true
                 second: 'Foo'
+
+    # Injecting values based on expressions
+    # https://symfony.com/doc/current/service_container.html#injecting-values-based-on-expressions
+    #
+    # The value is the result of an expression, not a static argument. The '@=' prefix marks
+    # the argument as an expression. In a double-quoted YAML string each backslash is escaped
+    # twice: "@=service('App\\\\Service\\\\Expression\\\\MailerConfiguration').getMailerMethod()"
+    #
+    # The same expressions are declared with #[Autowire(expression: ...)] on
+    # App\Service\Expression\Mailer. This service id shows the YAML form of that class.
+    #
+    # Available functions: service(), parameter(), env(). The container variable is also in scope.
+    # Expressions can also be used in properties, configurator arguments, method calls, and factories.
+    #
+    # Inspect with:
+    #   php bin/console debug:container app.expression_mailer
+    #   GET /service/expressions
+
+    app.expression_mailer:
+        class: App\Service\Expression\Mailer
+        arguments:
+            $mailerMethod: '@=service("App\\Service\\Expression\\MailerConfiguration").getMailerMethod()'
+            $adminEmail: '@=parameter("app.admin_email")'
+            $kernelEnvironment: '@=env("APP_ENV")'
+            $mailerMethodFallback: '@=container.hasParameter("app.mailer_method") ? parameter("app.mailer_method") : "sendmail"'
 
 # Each when@<env> block has its own scope and does not inherit _defaults from the main services section. 
 # Redefine _defaults in every when@<env> block where you need it

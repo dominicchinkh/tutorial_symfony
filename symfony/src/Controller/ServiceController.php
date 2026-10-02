@@ -1,9 +1,11 @@
 <?php
 namespace App\Controller;
 
+use App\Service\Expression\Mailer;
 use App\Service\ServiceService;
 use App\Service\Tag\GreetingHandlerCollection;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -25,6 +27,29 @@ class ServiceController extends AbstractController
             Response::HTTP_OK,
             [],
             ['json_encode_options' => JSON_PRETTY_PRINT]
+        );
+    }
+
+    // Expression arguments: service(), parameter(), env(), and the container variable.
+    //   GET /service/expressions
+    //
+    // attribute: #[Autowire(expression: '...')] on App\Service\Expression\Mailer
+    // yaml: app.expression_mailer in config/services.yaml ('@=' prefix)
+
+    #[Route('/expressions', name: 'expressions', methods: ['GET'])]
+    public function showExpressions(
+        Mailer $attributeMailer,
+        #[Autowire(service: 'app.expression_mailer')]
+        Mailer $yamlMailer,
+    ): JsonResponse {
+        return $this->json(
+            [
+                'attribute' => $attributeMailer->describe(),
+                'yaml' => $yamlMailer->describe(),
+            ],
+            Response::HTTP_OK,
+            [],
+            ['json_encode_options' => JSON_PRETTY_PRINT],
         );
     }
 
